@@ -58,7 +58,7 @@ type ListCommitsOptions struct {
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/commits.html#list-repository-commits
 func (s *CommitsService) ListCommits(ctx context.Context, projectId string, opts *ListCommitsOptions) ([]*Commit, error) {
-	apiEndpoint := fmt.Sprintf("/api/v4/projects/%s/repository/commits", projectId)
+	apiEndpoint := fmt.Sprintf("projects/%s/repository/commits", projectId)
 	var v []*Commit
 	if err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
 		return nil, err

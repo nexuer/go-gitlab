@@ -120,7 +120,7 @@ type CreateMergeRequestOptions struct {
 }
 
 func (s *MergeRequestsService) CreateMergeRequest(ctx context.Context, projectId string, opts *CreateMergeRequestOptions) (*MergeRequest, error) {
-	apiEndpoint := fmt.Sprintf("/api/v4/projects/%s/merge_requests", projectId)
+	apiEndpoint := fmt.Sprintf("projects/%s/merge_requests", projectId)
 	var v *MergeRequest
 	if err := s.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, opts, &v); err != nil {
 		return nil, err
@@ -148,7 +148,7 @@ type AcceptMergeRequestOptions struct {
 // 409	SHA does not match HEAD of source branch	The provided sha parameter does not match the HEAD of the source.
 // 422	Branch cannot be merged	The merge request failed to merge.
 func (s *MergeRequestsService) AcceptMergeRequest(ctx context.Context, projectId string, iid int, opts *AcceptMergeRequestOptions) (*MergeRequest, error) {
-	apiEndpoint := fmt.Sprintf("/api/v4/projects/%s/merge_requests/%d/merge", projectId, iid)
+	apiEndpoint := fmt.Sprintf("projects/%s/merge_requests/%d/merge", projectId, iid)
 	var v *MergeRequest
 	if err := s.client.InvokeByCredential(ctx, http.MethodPut, apiEndpoint, opts, &v); err != nil {
 		return nil, err

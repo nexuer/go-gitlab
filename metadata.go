@@ -24,7 +24,7 @@ type Metadata struct {
 }
 
 func (ms *MetadataService) GetMetadata(ctx context.Context) (*Metadata, error) {
-	const apiEndpoint = "/api/v4/metadata"
+	const apiEndpoint = "metadata"
 	var v Metadata
 	if err := ms.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, nil, &v); err != nil {
 		return nil, err

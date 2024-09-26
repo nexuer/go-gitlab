@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/zdz1715/ghttp"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/zdz1715/ghttp"
 )
 
 const (
@@ -119,6 +120,10 @@ func (c *Client) SetCredential(credential Credential) {
 	}
 }
 
+func (c *Client) api(path string) string {
+	return fmt.Sprintf("/api/%s/%s", c.apiVersion, path)
+}
+
 func (c *Client) InvokeByCredential(ctx context.Context, method, path string, args any, reply any) error {
 	accessToken, err := c.OAuth.GetAccessToken(ctx)
 	if err != nil {
@@ -127,11 +132,11 @@ func (c *Client) InvokeByCredential(ctx context.Context, method, path string, ar
 
 	callOpts := &ghttp.CallOptions{
 		BeforeHook: func(request *http.Request) error {
-			request.URL.Path = fmt.Sprintf("api/%s%s", c.apiVersion, request.URL.Path)
+			//request.URL.Path = fmt.Sprintf("api/%s%s", c.apiVersion, request.URL.Path)
 			return c.OAuth.credential.Auth(request, accessToken)
 		},
 	}
-	return c.Invoke(ctx, method, path, args, reply, callOpts)
+	return c.Invoke(ctx, method, c.api(path), args, reply, callOpts)
 }
 
 func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, callOpts ...*ghttp.CallOptions) error {
