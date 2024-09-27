@@ -41,14 +41,14 @@ type Client struct {
 
 	OAuth *OAuthService
 	//
-	//Branches      *BranchesService
-	//Commits       *CommitsService
-	//MergeRequests *MergeRequestsService
-	//Tags          *TagsService
-	//Users         *UsersService
-	Projects *ProjectsService
-	//Version       *VersionService
-	//Metadata      *MetadataService
+	Branches      *BranchesService
+	Commits       *CommitsService
+	MergeRequests *MergeRequestsService
+	Tags          *TagsService
+	Users         *UsersService
+	Projects      *ProjectsService
+	Version       *VersionService
+	Metadata      *MetadataService
 }
 
 func NewClient(credential Credential, opts ...*Options) *Client {
@@ -68,7 +68,14 @@ func NewClient(credential Credential, opts ...*Options) *Client {
 	c.common.client = c
 	c.OAuth = &OAuthService{client: c.common.client}
 
+	c.Branches = (*BranchesService)(&c.common)
+	c.Commits = (*CommitsService)(&c.common)
+	c.MergeRequests = (*MergeRequestsService)(&c.common)
+	c.Tags = (*TagsService)(&c.common)
+	c.Users = (*UsersService)(&c.common)
 	c.Projects = (*ProjectsService)(&c.common)
+	c.Metadata = (*MetadataService)(&c.common)
+	c.Version = (*VersionService)(&c.common)
 
 	c.SetCredential(credential)
 	return c

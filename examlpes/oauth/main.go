@@ -4,14 +4,15 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"github.com/nexuer/go-gitlab"
 	"os"
+
+	"github.com/nexuer/go-gitlab"
 )
 
 func main() {
 	// docs: https://docs.gitlab.com/ee/api/oauth2.html#authorization-code-flow
-	clientID := "6454bdea03a5638793a1a603e431f6d84ef8817555bd73b2a1e12fd35a5f0422"
-	clientSecret := "gloas-4573b00d075b3d55e69b22d8695aeceb76b9a4cf8014d4a07608d96fc022a5a8"
+	clientID := "YourClientID"
+	clientSecret := "YourClientSecret"
 	redirectURI := "http://127.0.0.1"
 	credential := &gitlab.OAuthCredential{
 		Endpoint:     gitlab.CloudEndpoint,
@@ -47,5 +48,19 @@ func main() {
 			os.Exit(1)
 		}
 		fmt.Printf("token: %+v\n", token)
+
+		// Fetch version
+		ver, err := client.Version.GetVersion(context.Background())
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fmt.Printf("version: %+v\n", ver)
+
+		// Refresh token
+		token, err = client.OAuth.GetAccessToken(context.Background(), &gitlab.GetAccessTokenOptions{
+			RefreshToken: token.RefreshToken,
+		})
+		fmt.Printf("RefreshToken: %+v\n", token)
 	}
 }
