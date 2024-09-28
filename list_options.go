@@ -7,6 +7,11 @@ const (
 	SortDesc Sort = "desc"
 )
 
+const (
+	DefaultPerPage = 20
+	MaxPerPage     = 100
+)
+
 // ListOptions specifies the optional parameters to various List methods that
 // support pagination.
 // GitLab API docs: https://docs.gitlab.com/ee/api/rest/index.html#pagination
