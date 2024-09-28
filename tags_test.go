@@ -10,7 +10,7 @@ import (
 )
 
 func TestTagsService_ListTags(t *testing.T) {
-	client := NewClient(testTokenCredential)
+	client := NewClient(testTokenCredential, &Options{Debug: true})
 
 	projects, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
 		ListOptions: NewListOptions(1, 1),
@@ -27,13 +27,13 @@ func TestTagsService_ListTags(t *testing.T) {
 	}
 	project := projects[0]
 	t.Logf("project: %s \n", project.WebURL)
-	branches, err := client.Tags.ListTags(context.Background(), strconv.Itoa(project.ID), &ListTagsOptions{
+	tags, err := client.Tags.ListTags(context.Background(), strconv.Itoa(project.ID), &ListTagsOptions{
 		ListOptions: NewListOptions(1, 5),
 	})
 	if err != nil {
 		t.Fatalf("Tags.ListTags returned error: %v", err)
 	}
-	for _, branch := range branches {
-		t.Logf("tag: %s \n", branch.Name)
+	for _, tag := range tags {
+		t.Logf("tag: %s create_at: %s\n", tag.Name, tag.CreatedAt)
 	}
 }

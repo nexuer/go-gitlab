@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 // TagsService
@@ -17,6 +18,7 @@ type Tag struct {
 	Message   string       `json:"message"`
 	Protected bool         `json:"protected"`
 	Target    string       `json:"target"`
+	CreatedAt *time.Time   `json:"created_at"`
 }
 
 type ReleaseNote struct {
