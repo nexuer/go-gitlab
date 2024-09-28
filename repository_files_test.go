@@ -34,5 +34,11 @@ func TestRepositoryFilesService_GetFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Fatalf("Branches.ListBranches returned: %+v", file)
+	t.Logf("Branches.ListBranches returned: %+v", file)
+
+	bs, err := file.GetContent()
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("file content: \n%s", string(bs))
 }

@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 )
@@ -27,6 +28,13 @@ type File struct {
 	BlobID          string `json:"blob_id"`
 	CommitID        string `json:"commit_id"`
 	LastCommitID    string `json:"last_commit_id"`
+}
+
+func (f *File) GetContent() ([]byte, error) {
+	if f == nil || f.Content == "" {
+		return make([]byte, 0), nil
+	}
+	return base64.StdEncoding.DecodeString(f.Content)
 }
 
 // GetFileOptions represents the available GetFile() options.
