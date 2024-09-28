@@ -17,8 +17,8 @@ type Pipeline struct {
 	Tag            bool            `json:"tag"`
 	YamlErrors     string          `json:"yaml_errors"`
 	User           *BasicUser      `json:"user"`
-	UpdatedAt      *time.Time      `json:"updated_at"`
-	CreatedAt      *time.Time      `json:"created_at"`
+	UpdatedAt      time.Time       `json:"updated_at"`
+	CreatedAt      time.Time       `json:"created_at"`
 	StartedAt      *time.Time      `json:"started_at"`
 	FinishedAt     *time.Time      `json:"finished_at"`
 	CommittedAt    *time.Time      `json:"committed_at"`
@@ -47,14 +47,14 @@ type DetailedStatus struct {
 // PipelineInfo shows the basic entities of a pipeline, mostly used as fields
 // on other assets, like Commit.
 type PipelineInfo struct {
-	ID        int        `json:"id"`
-	IID       int        `json:"iid"`
-	ProjectID int        `json:"project_id"`
-	Status    string     `json:"status"`
-	Source    string     `json:"source"`
-	Ref       string     `json:"ref"`
-	SHA       string     `json:"sha"`
-	WebURL    string     `json:"web_url"`
-	UpdatedAt *time.Time `json:"updated_at"`
-	CreatedAt *time.Time `json:"created_at"`
+	ID        int       `json:"id"`
+	IID       int       `json:"iid"`
+	ProjectID int       `json:"project_id"`
+	Status    string    `json:"status"`
+	Source    string    `json:"source"`
+	Ref       string    `json:"ref"`
+	SHA       string    `json:"sha"`
+	WebURL    string    `json:"web_url"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at"`
 }

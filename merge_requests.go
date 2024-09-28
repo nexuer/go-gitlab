@@ -21,8 +21,8 @@ type MergeRequest struct {
 	ProjectID                 int                 `json:"project_id"`
 	Title                     string              `json:"title"`
 	State                     string              `json:"state"`
-	CreatedAt                 *time.Time          `json:"created_at"`
-	UpdatedAt                 *time.Time          `json:"updated_at"`
+	CreatedAt                 time.Time           `json:"created_at"`
+	UpdatedAt                 time.Time           `json:"updated_at"`
 	Upvotes                   int                 `json:"upvotes"`
 	Downvotes                 int                 `json:"downvotes"`
 	Author                    *BasicUser          `json:"author"`

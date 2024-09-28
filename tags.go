@@ -12,13 +12,13 @@ import (
 type TagsService service
 
 type Tag struct {
-	Commit    *Commit      `json:"commit"`
+	Commit    Commit       `json:"commit"`
 	Release   *ReleaseNote `json:"release"`
 	Name      string       `json:"name"`
 	Message   string       `json:"message"`
 	Protected bool         `json:"protected"`
 	Target    string       `json:"target"`
-	CreatedAt *time.Time   `json:"created_at"`
+	CreatedAt time.Time    `json:"created_at"`
 }
 
 type ReleaseNote struct {

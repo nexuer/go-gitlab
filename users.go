@@ -23,7 +23,7 @@ type SSHKey struct {
 	ID        int64      `json:"id"`
 	Title     string     `json:"title"`
 	Key       string     `json:"key"`
-	CreatedAt *time.Time `json:"created_at"`
+	CreatedAt time.Time  `json:"created_at"`
 	ExpiresAt *time.Time `json:"expires_at"`
 	UsageType *string    `json:"usage_type"` // version: 15.7+
 }
@@ -60,7 +60,7 @@ type User struct {
 	State                          string             `json:"state"`
 	Locked                         bool               `json:"locked"`
 	WebURL                         string             `json:"web_url"`
-	CreatedAt                      *time.Time         `json:"created_at"`
+	CreatedAt                      time.Time          `json:"created_at"`
 	Bio                            string             `json:"bio"`
 	Bot                            bool               `json:"bot"`
 	Location                       string             `json:"location"`
@@ -106,13 +106,13 @@ type UserIdentity struct {
 
 // BasicUser included in other service responses (such as merge requests, pipelines, etc).
 type BasicUser struct {
-	ID        int        `json:"id"`
-	Username  string     `json:"username"`
-	Name      string     `json:"name"`
-	State     string     `json:"state"`
-	CreatedAt *time.Time `json:"created_at"`
-	AvatarURL string     `json:"avatar_url"`
-	WebURL    string     `json:"web_url"`
+	ID        int       `json:"id"`
+	Username  string    `json:"username"`
+	Name      string    `json:"name"`
+	State     string    `json:"state"`
+	CreatedAt time.Time `json:"created_at"`
+	AvatarURL string    `json:"avatar_url"`
+	WebURL    string    `json:"web_url"`
 }
 
 // ListUsersOptions represents the available ListUsers() options.

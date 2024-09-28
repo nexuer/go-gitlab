@@ -16,7 +16,7 @@ type Milestone struct {
 	DueDate     *time.Time `json:"due_date"`
 	State       string     `json:"state"`
 	WebURL      string     `json:"web_url"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	CreatedAt   *time.Time `json:"created_at"`
-	Expired     *bool      `json:"expired"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	CreatedAt   time.Time  `json:"created_at"`
+	Expired     bool       `json:"expired"`
 }
