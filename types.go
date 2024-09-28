@@ -88,3 +88,25 @@ type TasksCompletionStatus struct {
 	Count          int `json:"count"`
 	CompletedCount int `json:"completed_count"`
 }
+
+// LinkTypeValue represents a release link type.
+type LinkTypeValue string
+
+// List of available release link types.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/releases/links.html#create-a-release-link
+const (
+	ImageLinkType   LinkTypeValue = "image"
+	OtherLinkType   LinkTypeValue = "other"
+	PackageLinkType LinkTypeValue = "package"
+	RunbookLinkType LinkTypeValue = "runbook"
+)
+
+// LinkType is a helper routine that allocates a new LinkType value
+// to store v and returns a pointer to it.
+func LinkType(v LinkTypeValue) *LinkTypeValue {
+	p := new(LinkTypeValue)
+	*p = v
+	return p
+}

@@ -58,6 +58,7 @@ type User struct {
 	Email                          string             `json:"email"`
 	Name                           string             `json:"name"`
 	State                          string             `json:"state"`
+	Locked                         bool               `json:"locked"`
 	WebURL                         string             `json:"web_url"`
 	CreatedAt                      *time.Time         `json:"created_at"`
 	Bio                            string             `json:"bio"`
@@ -112,4 +113,42 @@ type BasicUser struct {
 	CreatedAt *time.Time `json:"created_at"`
 	AvatarURL string     `json:"avatar_url"`
 	WebURL    string     `json:"web_url"`
+}
+
+// ListUsersOptions represents the available ListUsers() options.
+//
+// GitLab API docs: https://docs.gitlab.com/ee/api/users.html#list-users
+type ListUsersOptions struct {
+	*ListOptions `query:",inline"`
+
+	Active          *bool `query:"active,omitempty" json:"active,omitempty"`
+	Blocked         *bool `query:"blocked,omitempty" json:"blocked,omitempty"`
+	ExcludeInternal *bool `query:"exclude_internal,omitempty" json:"exclude_internal,omitempty"`
+	ExcludeExternal *bool `query:"exclude_external,omitempty" json:"exclude_external,omitempty"`
+
+	// The options below are only available for admins.
+	Search               *string    `query:"search,omitempty" json:"search,omitempty"`
+	Username             *string    `query:"username,omitempty" json:"username,omitempty"`
+	ExternalUID          *string    `query:"extern_uid,omitempty" json:"extern_uid,omitempty"`
+	Provider             *string    `query:"provider,omitempty" json:"provider,omitempty"`
+	CreatedBefore        *time.Time `query:"created_before,omitempty" json:"created_before,omitempty"`
+	CreatedAfter         *time.Time `query:"created_after,omitempty" json:"created_after,omitempty"`
+	OrderBy              *string    `query:"order_by,omitempty" json:"order_by,omitempty"`
+	TwoFactor            *string    `query:"two_factor,omitempty" json:"two_factor,omitempty"`
+	Admins               *bool      `query:"admins,omitempty" json:"admins,omitempty"`
+	External             *bool      `query:"external,omitempty" json:"external,omitempty"`
+	WithoutProjects      *bool      `query:"without_projects,omitempty" json:"without_projects,omitempty"`
+	WithCustomAttributes *bool      `query:"with_custom_attributes,omitempty" json:"with_custom_attributes,omitempty"`
+	WithoutProjectBots   *bool      `query:"without_project_bots,omitempty" json:"without_project_bots,omitempty"`
+}
+
+// ListUsers gets a list of users.
+//
+// GitLab API docs: https://docs.gitlab.com/ee/api/users.html#list-users
+func (u *UsersService) ListUsers(ctx context.Context, opts *ListUsersOptions) ([]*User, error) {
+	var users []*User
+	if err := u.client.InvokeByCredential(ctx, http.MethodGet, "users", opts, &users); err != nil {
+		return nil, err
+	}
+	return users, nil
 }
