@@ -30,8 +30,8 @@ type ReleaseNote struct {
 // https://docs.gitlab.com/ee/api/tags.html#list-project-repository-tags
 type ListTagsOptions struct {
 	*ListOptions `query:",inline"`
-	OrderBy      *string `query:"order_by,omitempty"`
-	Search       *string `query:"search,omitempty"`
+
+	Search *string `query:"search,omitempty"`
 }
 
 func (s *TagsService) ListTags(ctx context.Context, projectId string, opts *ListTagsOptions) ([]*Tag, error) {
