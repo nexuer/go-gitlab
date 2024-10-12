@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -278,4 +279,27 @@ func (ps *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOp
 		return nil, err
 	}
 	return projects, nil
+}
+
+// GetProjectOptions represents the available GetProject() options.
+//
+// GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#get-a-single-project
+type GetProjectOptions struct {
+	License              *bool `query:"license,omitempty" json:"license,omitempty"`
+	Statistics           *bool `query:"statistics,omitempty" json:"statistics,omitempty"`
+	WithCustomAttributes *bool `query:"with_custom_attributes,omitempty" json:"with_custom_attributes,omitempty"`
+}
+
+// GetProject gets a specific project, identified by project ID or
+// NAMESPACE/PROJECT_NAME, which is owned by the authenticated user.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/projects.html#get-a-single-project
+func (ps *ProjectsService) GetProject(ctx context.Context, pid string, opts *GetProjectOptions) (*Project, error) {
+	u := fmt.Sprintf("projects/%s", pid)
+	var project Project
+	if err := ps.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &project); err != nil {
+		return nil, err
+	}
+	return &project, nil
 }
