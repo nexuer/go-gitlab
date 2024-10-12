@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/nexuer/utils v0.0.0-20240926060639-4709b0a8b125
-	github.com/zdz1715/ghttp v1.1.0
+	github.com/zdz1715/ghttp v1.1.1
 )
 
 require (

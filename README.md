@@ -3,7 +3,7 @@ GitLab Go SDK
 
 ## Installation
 ```shell
-go get -u github.com/nexuer/go-gitlab@latest
+go get github.com/nexuer/go-gitlab
 ```
 
 ## Examples
