@@ -27,9 +27,9 @@ type Branch struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/branches.html#list-repository-branches
 type ListBranchesOptions struct {
-	*ListOptions `query:",inline"`
-	Search       *string `query:"search,omitempty"`
-	Regex        *string `query:"regex,omitempty"`
+	ListOptions `query:",inline"`
+	Search      *string `query:"search,omitempty"`
+	Regex       *string `query:"regex,omitempty"`
 }
 
 // ListBranches gets a list of repository branches from a project, sorted by

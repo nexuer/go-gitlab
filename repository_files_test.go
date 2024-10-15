@@ -13,8 +13,11 @@ func TestRepositoryFilesService_GetFile(t *testing.T) {
 	client := NewClient(testTokenCredential)
 
 	projects, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
-		ListOptions: NewListOptions(1, 1),
-		OrderBy:     ptr.Ptr("star_count"),
+		ListOptions: ListOptions{
+			Page:    1,
+			PerPage: 1,
+			OrderBy: "star_count",
+		},
 		//Membership:  ptr.Ptr(true),
 	})
 

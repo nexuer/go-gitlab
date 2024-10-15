@@ -11,11 +11,10 @@ func TestProjectsService_ListProjects(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 
 	reply, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
-		ListOptions: NewListOptions(1, 10),
-		OrderBy:     ptr.Ptr("last_activity_at"),
+		ListOptions: NewListOptions(1),
 		Membership:  ptr.Ptr(true),
-		Search:      ptr.Ptr(""),
-		Visibility:  ptr.Ptr(PrivateVisibility),
+		//Search:     ptr.Ptr(""),
+		Visibility: ptr.Ptr(PrivateVisibility),
 	})
 
 	if err != nil {

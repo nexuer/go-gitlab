@@ -31,7 +31,7 @@ type ReleaseNote struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/tags.html#list-project-repository-tags
 type ListTagsOptions struct {
-	*ListOptions `query:",inline"`
+	ListOptions `query:",inline"`
 
 	Search *string `query:"search,omitempty"`
 }

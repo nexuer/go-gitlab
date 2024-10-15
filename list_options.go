@@ -28,28 +28,31 @@ type ListOptions struct {
 	Sort       Sort   `query:"sort,omitempty" json:"sort,omitempty"`
 }
 
-func NewListOptions(page int, perPage ...int) *ListOptions {
+func NewListOptions(page int, perPage ...int) ListOptions {
 	if page <= 0 {
 		page = 1
 	}
-	l := &ListOptions{
-		Page:    page,
-		PerPage: 20,
-	}
+	pg := DefaultPerPage
 	if len(perPage) > 0 && perPage[0] > 0 {
-		l.PerPage = perPage[0]
+		pg = perPage[0]
 	}
+	l := ListOptions{
+		Page:    page,
+		PerPage: pg,
+	}
+
 	return l
 }
 
-func NewKeySet(orderBy string, sort Sort, perPage ...int) *ListOptions {
-	l := &ListOptions{
+func NewKeySet(orderBy string, sort Sort, perPage ...int) ListOptions {
+	pg := DefaultPerPage
+	if len(perPage) > 0 && perPage[0] > 0 {
+		pg = perPage[0]
+	}
+	return ListOptions{
 		Pagination: "keyset",
 		OrderBy:    orderBy,
 		Sort:       sort,
+		PerPage:    pg,
 	}
-	if len(perPage) > 0 && perPage[0] > 0 {
-		l.PerPage = perPage[0]
-	}
-	return l
 }

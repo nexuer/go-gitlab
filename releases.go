@@ -60,7 +60,8 @@ type Release struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/releases/index.html#list-releases
 type ListReleasesOptions struct {
-	*ListOptions           `query:",inline"`
+	ListOptions `query:",inline"`
+
 	IncludeHTMLDescription *bool `query:"include_html_description,omitempty" json:"include_html_description,omitempty"`
 }
 

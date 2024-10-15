@@ -51,6 +51,7 @@ type Client struct {
 	Metadata        *MetadataService
 	Releases        *ReleasesService
 	RepositoryFiles *RepositoryFilesService
+	Milestones      *MilestonesService
 }
 
 func NewClient(credential Credential, opts ...*Options) *Client {
@@ -80,6 +81,7 @@ func NewClient(credential Credential, opts ...*Options) *Client {
 	c.Version = (*VersionService)(&c.common)
 	c.Releases = (*ReleasesService)(&c.common)
 	c.RepositoryFiles = (*RepositoryFilesService)(&c.common)
+	c.Milestones = (*MilestonesService)(&c.common)
 
 	c.SetCredential(credential)
 	return c

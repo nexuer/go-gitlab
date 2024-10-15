@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"strconv"
 	"testing"
-
-	"github.com/nexuer/utils/ptr"
 )
 
 func TestTagsService_ListTags(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 
 	projects, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
-		ListOptions: NewListOptions(1, 1),
-		OrderBy:     ptr.Ptr("star_count"),
+		ListOptions: ListOptions{
+			Page:    1,
+			PerPage: 1,
+			OrderBy: "star_count",
+		},
 		//Membership:  ptr.Ptr(true),
 	})
 
@@ -28,7 +29,10 @@ func TestTagsService_ListTags(t *testing.T) {
 	project := projects[0]
 	t.Logf("project: %s \n", project.WebURL)
 	tags, err := client.Tags.ListTags(context.Background(), strconv.Itoa(project.ID), &ListTagsOptions{
-		ListOptions: NewListOptions(1, 5),
+		ListOptions: ListOptions{
+			Page:    1,
+			PerPage: 20,
+		},
 	})
 	if err != nil {
 		t.Fatalf("Tags.ListTags returned error: %v", err)

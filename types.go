@@ -1,5 +1,7 @@
 package gitlab
 
+import "time"
+
 // AccessLevelValue represents a permission level within GitLab.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/members.html#roles
@@ -62,6 +64,13 @@ const (
 	SquashOptionDefaultOn  SquashOptionValue = "default_on"
 )
 
+type MilestoneState string
+
+const (
+	Active MilestoneState = "active"
+	Closed MilestoneState = "closed"
+)
+
 // BuildStateValue represents a GitLab build state.
 type BuildStateValue string
 
@@ -109,4 +118,47 @@ func LinkType(v LinkTypeValue) *LinkTypeValue {
 	p := new(LinkTypeValue)
 	*p = v
 	return p
+}
+
+type Date struct {
+	t time.Time
+}
+
+func NewDate(t time.Time) *Date {
+	return &Date{t: t}
+}
+
+func (d Date) String() string {
+	return d.t.Format(time.DateOnly)
+}
+
+func (d Date) IsZero() bool {
+	return d.t.IsZero()
+}
+
+// UnmarshalJSON implements the json.Unmarshaler interface.
+func (d *Date) UnmarshalJSON(data []byte) error {
+	// Ignore null, like in the main JSON package.
+	str := string(data)
+	if str == "null" {
+		return nil
+	}
+	var err error
+	data = data[len(`"`) : len(data)-len(`"`)]
+	d.t, err = time.Parse(`"`+time.DateOnly+`"`, str)
+	return err
+}
+
+// MarshalJSON implements the json.Marshaler interface.
+func (d Date) MarshalJSON() ([]byte, error) {
+	if d.t.IsZero() {
+		return []byte(`null`), nil
+	}
+
+	b := make([]byte, 0, len(time.DateOnly)+2)
+	b = append(b, '"')
+	b = d.t.AppendFormat(b, time.DateOnly)
+	b = append(b, '"')
+
+	return b, nil
 }

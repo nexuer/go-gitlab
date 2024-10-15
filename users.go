@@ -60,7 +60,7 @@ type User struct {
 	State                          string             `json:"state"`
 	Locked                         bool               `json:"locked"`
 	WebURL                         string             `json:"web_url"`
-	CreatedAt                      time.Time          `json:"created_at"`
+	CreatedAt                      *time.Time         `json:"created_at"`
 	Bio                            string             `json:"bio"`
 	Bot                            bool               `json:"bot"`
 	Location                       string             `json:"location"`
@@ -74,7 +74,7 @@ type User struct {
 	ExternUID                      string             `json:"extern_uid"`
 	Provider                       string             `json:"provider"`
 	ThemeID                        int                `json:"theme_id"`
-	LastActivityOn                 *time.Time         `json:"last_activity_on"`
+	LastActivityOn                 *Date              `json:"last_activity_on"`
 	ColorSchemeID                  int                `json:"color_scheme_id"`
 	IsAdmin                        bool               `json:"is_admin"`
 	AvatarURL                      string             `json:"avatar_url"`
@@ -119,7 +119,7 @@ type BasicUser struct {
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/users.html#list-users
 type ListUsersOptions struct {
-	*ListOptions `query:",inline"`
+	ListOptions `query:",inline"`
 
 	Active          *bool `query:"active,omitempty" json:"active,omitempty"`
 	Blocked         *bool `query:"blocked,omitempty" json:"blocked,omitempty"`

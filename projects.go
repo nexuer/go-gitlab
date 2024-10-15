@@ -48,7 +48,7 @@ type Project struct {
 	CreatorID                                 int                        `json:"creator_id"`
 	Namespace                                 *ProjectNamespace          `json:"namespace"`
 	Permissions                               *Permissions               `json:"permissions"`
-	MarkedForDeletionAt                       *time.Time                 `json:"marked_for_deletion_at"`
+	MarkedForDeletionAt                       *Date                      `json:"marked_for_deletion_at"`
 	EmptyRepo                                 bool                       `json:"empty_repo"`
 	Archived                                  bool                       `json:"archived"`
 	AvatarURL                                 string                     `json:"avatar_url"`
@@ -243,7 +243,7 @@ type ContainerExpirationPolicy struct {
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
 type ListProjectsOptions struct {
-	*ListOptions `query:",inline"`
+	ListOptions `query:",inline"`
 
 	Archived                 *bool             `query:"archived,omitempty"`
 	IDAfter                  *int              `query:"id_after,omitempty"`
@@ -253,7 +253,6 @@ type ListProjectsOptions struct {
 	LastActivityBefore       *time.Time        `query:"last_activity_before,omitempty"`
 	Membership               *bool             `query:"membership,omitempty"`
 	MinAccessLevel           *AccessLevelValue `query:"min_access_level,omitempty"`
-	OrderBy                  *string           `query:"order_by,omitempty"`
 	Owned                    *bool             `query:"owned,omitempty"`
 	RepositoryChecksumFailed *bool             `query:"repository_checksum_failed,omitempty"`
 	RepositoryStorage        *string           `query:"repository_storage,omitempty"`
