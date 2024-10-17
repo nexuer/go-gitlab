@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/nexuer/utils/ptr"
@@ -27,9 +28,12 @@ func TestProjectsService_ListProjects(t *testing.T) {
 func TestProjectsService_GetProject(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 
-	reply, err := client.Projects.GetProject(context.Background(), "1004", &GetProjectOptions{
+	reply, err := client.Projects.GetProject(context.Background(), "11004", &GetProjectOptions{
 		Statistics: ptr.Ptr(true),
 	})
+
+	fmt.Println(ErrNotFound(err))
+	fmt.Println(StatusCode(err))
 
 	if err != nil {
 		t.Error(err)

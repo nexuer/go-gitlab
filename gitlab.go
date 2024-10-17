@@ -169,8 +169,7 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 // Error data-validation-and-error-reporting + OAuth error
 // GitLab API docs: https://docs.gitlab.com/ee/api/rest/#data-validation-and-error-reporting
 type Error struct {
-	Message any `json:"message"`
-
+	Message          any    `json:"message"`
 	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 }
@@ -194,8 +193,22 @@ func (e *Error) String() string {
 	return ""
 }
 
-func (e *Error) Reset() {
-	e.Message = nil
-	e.Error = ""
-	e.ErrorDescription = ""
+func ErrNotFound(err error) bool {
+	e, ok := ghttp.ConvertToHTTPNot2xxError(err)
+	if ok {
+		return e.StatusCode == http.StatusNotFound
+	}
+	return false
+}
+
+func StatusCode(err error) (int, bool) {
+	if err == nil {
+		return http.StatusOK, true
+	}
+	e, ok := ghttp.ConvertToHTTPNot2xxError(err)
+	if ok {
+		return e.StatusCode, true
+	}
+
+	return 0, false
 }
