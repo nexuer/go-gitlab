@@ -28,7 +28,7 @@ func TestProjectsService_ListProjects(t *testing.T) {
 func TestProjectsService_GetProject(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 
-	reply, err := client.Projects.GetProject(context.Background(), "11004", &GetProjectOptions{
+	reply, err := client.Projects.GetProject(context.Background(), "971", &GetProjectOptions{
 		Statistics: ptr.Ptr(true),
 	})
 

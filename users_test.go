@@ -15,3 +15,14 @@ func TestUsersService_ListUsers(t *testing.T) {
 
 	t.Logf("Users.ListUsers returned: %+v", users)
 }
+
+func TestUsersService_ListSSHKeys(t *testing.T) {
+	client := NewClient(testTokenCredential, &Options{Debug: true})
+
+	keys, err := client.Users.ListSSHKeys(context.Background())
+	if err != nil {
+		t.Fatalf("Users.ListSSHKeys returned error: %v", err)
+	}
+
+	t.Logf("Users.ListSSHKeys returned: %+v", keys)
+}

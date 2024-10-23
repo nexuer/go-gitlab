@@ -28,8 +28,19 @@ type SSHKey struct {
 	UsageType *string    `json:"usage_type"` // version: 15.7+
 }
 
+// ListSSHKeys
+// GitLab API Docs: https://docs.gitlab.com/ee/api/user_keys.html#list-your-ssh-keys
+func (u *UsersService) ListSSHKeys(ctx context.Context) ([]*SSHKey, error) {
+	const apiEndpoint = "user/keys"
+	var keys []*SSHKey
+	if err := u.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, nil, &keys); err != nil {
+		return nil, err
+	}
+	return keys, nil
+}
+
 // AddSSHKey
-// GitLab API Docs: https://docs.gitlab.com/ee/api/users.html#add-ssh-key
+// GitLab API Docs: https://docs.gitlab.com/ee/api/user_keys.html#add-an-ssh-key-to-your-account
 func (u *UsersService) AddSSHKey(ctx context.Context, req *AddSSHKeyOptions) (*SSHKey, error) {
 	const apiEndpoint = "user/keys"
 	var key SSHKey
@@ -40,7 +51,7 @@ func (u *UsersService) AddSSHKey(ctx context.Context, req *AddSSHKeyOptions) (*S
 }
 
 // DeleteSSHKey
-// GitLab API Docs: https://docs.gitlab.com/ee/api/users.html#delete-ssh-key-for-current-user
+// GitLab API Docs: https://docs.gitlab.com/ee/api/user_keys.html#delete-an-ssh-key-from-your-account
 func (u *UsersService) DeleteSSHKey(ctx context.Context, keyId string) error {
 	apiEndpoint := fmt.Sprintf("user/keys/%s", keyId)
 	if err := u.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
