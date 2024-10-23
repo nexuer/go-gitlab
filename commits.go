@@ -24,18 +24,18 @@ type Commit struct {
 	CreatedAt      time.Time         `json:"created_at"`
 	Message        string            `json:"message"`
 	ParentIDs      []string          `json:"parent_ids"`
-	Stats          CommitStats       `json:"stats"`
-	Status         BuildStateValue   `json:"status"`
-	LastPipeline   PipelineInfo      `json:"last_pipeline"`
+	Stats          *CommitStats      `json:"stats"`
+	Status         *BuildStateValue  `json:"status"`
+	LastPipeline   *PipelineInfo     `json:"last_pipeline"`
 	ProjectID      int               `json:"project_id"`
 	Trailers       map[string]string `json:"trailers"`
 	WebURL         string            `json:"web_url"`
 }
 
 type CommitStats struct {
-	Additions int `json:"additions"`
-	Deletions int `json:"deletions"`
-	Total     int `json:"total"`
+	Additions int64 `json:"additions"`
+	Deletions int64 `json:"deletions"`
+	Total     int64 `json:"total"`
 }
 
 // ListCommitsOptions represents the available ListCommits() options.
