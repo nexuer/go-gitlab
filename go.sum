@@ -1,7 +1,7 @@
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/nexuer/ghttp v0.0.0-20241028052327-a26f0c679414 h1:2Xb2nosA+Oxe8tOyYeXhCP5DImR5v3vZirhPqshxd7Q=
-github.com/nexuer/ghttp v0.0.0-20241028052327-a26f0c679414/go.mod h1:0sK3LhTOscXsn69EyR+zppY03vsLLSmAbrHEU+khZKw=
+github.com/nexuer/ghttp v0.0.0-20241028064211-7b092628729b h1:1qat8vEJvsJcg2opLiEkoeYaC7ETONxbvVWC4r5J3wY=
+github.com/nexuer/ghttp v0.0.0-20241028064211-7b092628729b/go.mod h1:0sK3LhTOscXsn69EyR+zppY03vsLLSmAbrHEU+khZKw=
 github.com/nexuer/utils v0.0.0-20240926060639-4709b0a8b125 h1:40t3YiOiQ9QRww1SvZBc83LJXTst2rp+HNLWL48F3b0=
 github.com/nexuer/utils v0.0.0-20240926060639-4709b0a8b125/go.mod h1:rbLhfZdurGV3DlQiLGZJTyTwjILFboqA9DBM+AiX1y0=
 google.golang.org/protobuf v1.35.1 h1:m3LfL6/Ca+fqnjnlqQXNpFPABW1UD7mjh8KO2mKFytA=
