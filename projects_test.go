@@ -2,7 +2,6 @@ package gitlab
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/nexuer/utils/ptr"
@@ -31,9 +30,6 @@ func TestProjectsService_GetProject(t *testing.T) {
 	reply, err := client.Projects.GetProject(context.Background(), "971", &GetProjectOptions{
 		Statistics: ptr.Ptr(true),
 	})
-
-	fmt.Println(ErrNotFound(err))
-	fmt.Println(StatusCode(err))
 
 	if err != nil {
 		t.Error(err)

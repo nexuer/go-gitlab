@@ -54,8 +54,12 @@ type AccessToken struct {
 }
 
 func (oa *OAuthService) AuthorizeURL(clientId, redirectUri, scope string) string {
+	u := ""
+	if oa.credential != nil {
+		u = oa.credential.GetEndpoint()
+	}
 	return fmt.Sprintf("%s/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s&scope=%s",
-		oa.client.cc.Endpoint(),
+		u,
 		clientId,
 		url.QueryEscape(redirectUri),
 		url.QueryEscape(scope),

@@ -3,12 +3,13 @@ package gitlab
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"time"
 
-	"github.com/zdz1715/ghttp"
+	"github.com/nexuer/ghttp"
 )
 
 const (
@@ -62,7 +63,7 @@ func NewClient(credential Credential, opts ...*Options) *Client {
 	clientOpts := c.parseOptions(opts...)
 
 	clientOpts = append(clientOpts,
-		ghttp.WithNot2xxError(func() ghttp.Not2xxError {
+		ghttp.WithNot2xxError(func() error {
 			return new(Error)
 		}),
 	)
@@ -106,7 +107,7 @@ func (c *Client) parseOptions(opts ...*Options) []ghttp.ClientOption {
 	}
 
 	if opt.Debug {
-		clientOpts = append(clientOpts, ghttp.WithDebug(ghttp.DefaultDebug))
+		clientOpts = append(clientOpts, ghttp.WithDebug(opt.Debug))
 	}
 
 	if opt.Timeout > 0 {
@@ -170,16 +171,16 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 // GitLab API docs: https://docs.gitlab.com/ee/api/rest/#data-validation-and-error-reporting
 type Error struct {
 	Message          any    `json:"message"`
-	Error            string `json:"error"`
+	Err              string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 }
 
-func (e *Error) String() string {
+func (e *Error) Error() string {
 	if e.ErrorDescription != "" {
 		return e.ErrorDescription
 	}
-	if e.Error != "" {
-		return e.Error
+	if e.Err != "" {
+		return e.Err
 	}
 	if e.Message != nil {
 		switch msg := e.Message.(type) {
@@ -194,21 +195,17 @@ func (e *Error) String() string {
 }
 
 func ErrNotFound(err error) bool {
-	e, ok := ghttp.ConvertToHTTPNot2xxError(err)
-	if ok {
+	var e *ghttp.Error
+	if errors.As(err, &e) {
 		return e.StatusCode == http.StatusNotFound
 	}
 	return false
 }
 
-func StatusCode(err error) (int, bool) {
-	if err == nil {
-		return http.StatusOK, true
-	}
-	e, ok := ghttp.ConvertToHTTPNot2xxError(err)
-	if ok {
+func StatusForErr(err error) (int, bool) {
+	var e *ghttp.Error
+	if errors.As(err, &e) {
 		return e.StatusCode, true
 	}
-
 	return 0, false
 }
