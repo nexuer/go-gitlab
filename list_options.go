@@ -15,6 +15,12 @@ const (
 // ListOptions specifies the optional parameters to various List methods that
 // support pagination.
 // GitLab API docs: https://docs.gitlab.com/ee/api/rest/index.html#pagination
+// https://docs.gitlab.com/ee/api/rest/index.html#pagination-response-headers
+// For performance reasons, if a query returns more than 10,000 records, GitLab doesn’t return the following headers:
+//
+//	x-total
+//	x-total-pages
+//	rel="last" link
 type ListOptions struct {
 	// GitLab API docs: https://docs.gitlab.com/ee/api/rest/index.html#offset-based-pagination
 	// For paginated result sets, page of results to retrieve.

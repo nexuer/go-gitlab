@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -27,11 +28,13 @@ type service struct {
 }
 
 type Options struct {
-	UserAgent  string
 	APIVersion APIVersion
-	Timeout    time.Duration
-	Proxy      func(*http.Request) (*url.URL, error)
-	Debug      bool
+
+	UserAgent string
+	Timeout   time.Duration
+	Proxy     func(*http.Request) (*url.URL, error)
+	Debug     bool
+	TLS       *tls.Config
 }
 
 type Client struct {
@@ -114,6 +117,14 @@ func (c *Client) parseOptions(opts ...*Options) []ghttp.ClientOption {
 		clientOpts = append(clientOpts, ghttp.WithTimeout(opt.Timeout))
 	}
 
+	if opt.Proxy != nil {
+		clientOpts = append(clientOpts, ghttp.WithProxy(opt.Proxy))
+	}
+
+	if opt.TLS != nil {
+		clientOpts = append(clientOpts, ghttp.WithTLSConfig(opt.TLS))
+	}
+
 	return clientOpts
 }
 
@@ -169,8 +180,34 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 	return err
 }
 
+// todo: https://docs.gitlab.com/ee/api/rest/#encoding
+
 // Error data-validation-and-error-reporting + OAuth error
 // GitLab API docs: https://docs.gitlab.com/ee/api/rest/#data-validation-and-error-reporting
+// When an attribute is missing, you receive something like:
+//
+//	{
+//	   "message":"400 (Bad request) \"title\" not given"
+//	}
+//
+// When a validation error occurs, error messages are different. They hold all details of validation errors:
+//
+//	{
+//	   "message": {
+//	       "<property-name>": [
+//	           "<error-message>",
+//	           "<error-message>",
+//	           ...
+//	       ],
+//	       "<embed-entity>": {
+//	           "<property-name>": [
+//	               "<error-message>",
+//	               "<error-message>",
+//	               ...
+//	           ],
+//	       }
+//	   }
+//	}
 type Error struct {
 	Message          any    `json:"message"`
 	Err              string `json:"error"`
@@ -181,6 +218,7 @@ func (e *Error) Error() string {
 	if e.ErrorDescription != "" {
 		return e.ErrorDescription
 	}
+
 	if e.Err != "" {
 		return e.Err
 	}

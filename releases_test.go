@@ -3,6 +3,7 @@ package gitlab
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 	"testing"
 )
@@ -37,4 +38,8 @@ func TestReleasesService_ListReleases(t *testing.T) {
 	for _, release := range releases {
 		t.Logf("release: %s \n", release.Name)
 	}
+}
+
+func TestReleasesService_GetRelease(t *testing.T) {
+	fmt.Println(url.QueryEscape("diaspora/diaspora"))
 }
