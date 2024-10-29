@@ -12,7 +12,7 @@ import (
 func TestRepositoryFilesService_GetFile(t *testing.T) {
 	client := NewClient(testTokenCredential)
 
-	projects, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
+	projects, _, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
 		ListOptions: ListOptions{
 			Page:    1,
 			PerPage: 1,

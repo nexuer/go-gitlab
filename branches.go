@@ -40,7 +40,7 @@ type ListBranchesOptions struct {
 func (s *BranchesService) ListBranches(ctx context.Context, projectID string, opts *ListBranchesOptions) ([]*Branch, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/branches", projectID)
 	var v []*Branch
-	if err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil
@@ -58,7 +58,7 @@ type CreateBranchOptions struct {
 func (s *BranchesService) CreateBranch(ctx context.Context, projectId string, opts *CreateBranchOptions) (*Branch, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/branches", projectId)
 	var v *Branch
-	if err := s.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil
@@ -66,7 +66,7 @@ func (s *BranchesService) CreateBranch(ctx context.Context, projectId string, op
 
 func (s *BranchesService) DeleteBranch(ctx context.Context, projectId, branch string) error {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/branches/%s", projectId, branch)
-	if err := s.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
 		return err
 	}
 	return nil
@@ -74,7 +74,7 @@ func (s *BranchesService) DeleteBranch(ctx context.Context, projectId, branch st
 
 func (s *BranchesService) DeleteMergedBranches(ctx context.Context, projectId string) error {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/merged_branches", projectId)
-	if err := s.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
 		return err
 	}
 	return nil

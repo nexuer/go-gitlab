@@ -2,8 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
+	"log"
 
 	"github.com/nexuer/go-gitlab"
 )
@@ -17,12 +16,10 @@ func main() {
 
 	client := gitlab.NewClient(credential, &gitlab.Options{Debug: true})
 
-	// 获取版本
 	ver, err := client.Version.GetVersion(context.Background())
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
-	fmt.Printf("version: %+v\n", ver)
+	log.Printf("version: %+v", ver)
 
 }

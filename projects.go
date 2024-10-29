@@ -272,12 +272,13 @@ type ListProjectsOptions struct {
 
 // ListProjects gets a list of projects accessible by the authenticated user.
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
-func (ps *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOptions) ([]*Project, error) {
+func (ps *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOptions) ([]*Project, *Pagination, error) {
 	var projects []*Project
-	if err := ps.client.InvokeByCredential(ctx, http.MethodGet, "projects", req, &projects); err != nil {
-		return nil, err
+	resp, err := ps.client.InvokeByCredential(ctx, http.MethodGet, "projects", req, &projects)
+	if err != nil {
+		return nil, nil, err
 	}
-	return projects, nil
+	return projects, parsePagination(req.ListOptions, resp), nil
 }
 
 // GetProjectOptions represents the available GetProject() options.
@@ -297,7 +298,7 @@ type GetProjectOptions struct {
 func (ps *ProjectsService) GetProject(ctx context.Context, pid string, opts *GetProjectOptions) (*Project, error) {
 	u := fmt.Sprintf("projects/%s", pid)
 	var project Project
-	if err := ps.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &project); err != nil {
+	if _, err := ps.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &project); err != nil {
 		return nil, err
 	}
 	return &project, nil

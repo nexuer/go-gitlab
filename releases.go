@@ -72,7 +72,7 @@ type ListReleasesOptions struct {
 func (s *ReleasesService) ListReleases(ctx context.Context, projectID string, opts *ListReleasesOptions) ([]*Release, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/releases", projectID)
 	var v []*Release
-	if err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil

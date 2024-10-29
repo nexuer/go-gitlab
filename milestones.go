@@ -57,7 +57,7 @@ func (s *MilestonesService) ListMilestones(ctx context.Context, pid string, opts
 	u := fmt.Sprintf("projects/%s/milestones", pid)
 
 	var milestones []*Milestone
-	if err := s.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &milestones); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &milestones); err != nil {
 		return nil, err
 	}
 	return milestones, nil

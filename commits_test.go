@@ -11,9 +11,9 @@ func TestCommitsService_ListCommits(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 
 	reply, err := client.Commits.ListCommits(context.Background(), "971", &ListCommitsOptions{
-		RefName:     ptr.Ptr("main"),
-		WithStats:   ptr.Ptr(true),
-		ListOptions: NewListOptions(1, 10),
+		RefName:   ptr.Ptr("main"),
+		WithStats: ptr.Ptr(true),
+		//ListOptions: NewListOptions(1, 10),
 	})
 
 	if err != nil {

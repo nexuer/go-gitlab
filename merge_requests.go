@@ -122,7 +122,7 @@ type CreateMergeRequestOptions struct {
 func (s *MergeRequestsService) CreateMergeRequest(ctx context.Context, projectId string, opts *CreateMergeRequestOptions) (*MergeRequest, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/merge_requests", projectId)
 	var v *MergeRequest
-	if err := s.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil
@@ -150,7 +150,7 @@ type AcceptMergeRequestOptions struct {
 func (s *MergeRequestsService) AcceptMergeRequest(ctx context.Context, projectId string, iid int, opts *AcceptMergeRequestOptions) (*MergeRequest, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/merge_requests/%d/merge", projectId, iid)
 	var v *MergeRequest
-	if err := s.client.InvokeByCredential(ctx, http.MethodPut, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodPut, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil

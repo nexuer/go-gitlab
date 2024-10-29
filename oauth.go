@@ -94,7 +94,7 @@ func (oa *OAuthService) GetAccessToken(ctx context.Context, opts ...*GetAccessTo
 	}
 
 	var respBody AccessToken
-	if err := oa.client.Invoke(ctx, http.MethodPost, "/oauth/token", req, &respBody); err != nil {
+	if _, err := oa.client.Invoke(ctx, http.MethodPost, "/oauth/token", req, &respBody); err != nil {
 		return nil, err
 	}
 	oa.store.memory(&respBody)

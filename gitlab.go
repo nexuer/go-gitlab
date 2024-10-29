@@ -152,10 +152,10 @@ func (c *Client) API(path string, ver ...APIVersion) string {
 	return fmt.Sprintf("/api/%s/%s", c.apiVersion, path)
 }
 
-func (c *Client) InvokeByCredential(ctx context.Context, method, path string, args any, reply any) error {
+func (c *Client) InvokeByCredential(ctx context.Context, method, path string, args any, reply any) (*http.Response, error) {
 	accessToken, err := c.OAuth.GetAccessToken(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	callOpts := &ghttp.CallOptions{
@@ -166,7 +166,7 @@ func (c *Client) InvokeByCredential(ctx context.Context, method, path string, ar
 	return c.Invoke(ctx, method, c.API(path), args, reply, callOpts)
 }
 
-func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, callOpts ...*ghttp.CallOptions) error {
+func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, callOpts ...*ghttp.CallOptions) (*http.Response, error) {
 	callOpt := &ghttp.CallOptions{}
 	if len(callOpts) > 0 && callOpts[0] != nil {
 		callOpt = callOpts[0]
@@ -175,9 +175,7 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 		callOpt.Query = args
 		args = nil
 	}
-
-	_, err := c.cc.Invoke(ctx, method, path, args, reply, callOpt)
-	return err
+	return c.cc.Invoke(ctx, method, path, args, reply, callOpt)
 }
 
 // todo: https://docs.gitlab.com/ee/api/rest/#encoding

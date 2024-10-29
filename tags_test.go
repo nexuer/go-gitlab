@@ -10,7 +10,7 @@ import (
 func TestTagsService_ListTags(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 
-	projects, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
+	projects, _, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
 		ListOptions: ListOptions{
 			Page:    1,
 			PerPage: 1,

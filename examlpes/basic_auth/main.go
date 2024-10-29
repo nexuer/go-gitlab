@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
+	"log"
 
 	"github.com/nexuer/go-gitlab"
 )
 
+// This example shows how to create a client with username and password.
 func main() {
 	// docs: https://docs.gitlab.com/ee/api/oauth2.html#resource-owner-password-credentials-flow
 	credential := &gitlab.PasswordCredential{
@@ -21,9 +21,7 @@ func main() {
 
 	ver, err := client.Version.GetVersion(context.Background())
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
-	tk, _ := client.OAuth.GetAccessToken(context.Background())
-	fmt.Printf("version: %+v\ntoken: %s\n", ver, tk.AccessToken)
+	log.Printf("version: %+v", ver)
 }

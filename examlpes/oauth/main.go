@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/nexuer/go-gitlab"
@@ -52,15 +53,18 @@ func main() {
 		// Fetch version
 		ver, err := client.Version.GetVersion(context.Background())
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
+
 		fmt.Printf("version: %+v\n", ver)
 
 		// Refresh token
 		token, err = client.OAuth.GetAccessToken(context.Background(), &gitlab.GetAccessTokenOptions{
 			RefreshToken: token.RefreshToken,
 		})
+		if err != nil {
+			log.Fatal(err)
+		}
 		fmt.Printf("RefreshToken: %+v\n", token)
 	}
 }

@@ -8,7 +8,9 @@ import (
 func TestUsersService_ListUsers(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 
-	users, err := client.Users.ListUsers(context.Background(), &ListUsersOptions{})
+	users, err := client.Users.ListUsers(context.Background(), &ListUsersOptions{
+		ListOptions: NewKeySet("username", SortAsc),
+	})
 	if err != nil {
 		t.Fatalf("Users.ListUsers returned error: %v", err)
 	}

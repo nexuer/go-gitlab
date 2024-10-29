@@ -61,7 +61,7 @@ type ListCommitsOptions struct {
 func (s *CommitsService) ListCommits(ctx context.Context, projectId string, opts *ListCommitsOptions) ([]*Commit, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/commits", projectId)
 	var v []*Commit
-	if err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil

@@ -39,7 +39,7 @@ type ListTagsOptions struct {
 func (s *TagsService) ListTags(ctx context.Context, projectId string, opts *ListTagsOptions) ([]*Tag, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/tags", projectId)
 	var v []*Tag
-	if err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil

@@ -33,7 +33,7 @@ type SSHKey struct {
 func (u *UsersService) ListSSHKeys(ctx context.Context) ([]*SSHKey, error) {
 	const apiEndpoint = "user/keys"
 	var keys []*SSHKey
-	if err := u.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, nil, &keys); err != nil {
+	if _, err := u.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, nil, &keys); err != nil {
 		return nil, err
 	}
 	return keys, nil
@@ -44,7 +44,7 @@ func (u *UsersService) ListSSHKeys(ctx context.Context) ([]*SSHKey, error) {
 func (u *UsersService) AddSSHKey(ctx context.Context, req *AddSSHKeyOptions) (*SSHKey, error) {
 	const apiEndpoint = "user/keys"
 	var key SSHKey
-	if err := u.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, req, &key); err != nil {
+	if _, err := u.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, req, &key); err != nil {
 		return nil, err
 	}
 	return &key, nil
@@ -54,7 +54,7 @@ func (u *UsersService) AddSSHKey(ctx context.Context, req *AddSSHKeyOptions) (*S
 // GitLab API Docs: https://docs.gitlab.com/ee/api/user_keys.html#delete-an-ssh-key-from-your-account
 func (u *UsersService) DeleteSSHKey(ctx context.Context, keyId string) error {
 	apiEndpoint := fmt.Sprintf("user/keys/%s", keyId)
-	if err := u.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
+	if _, err := u.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
 		return err
 	}
 	return nil
@@ -133,9 +133,12 @@ type ListUsersOptions struct {
 	ListOptions `query:",inline"`
 
 	Active          *bool `query:"active,omitempty" json:"active,omitempty"`
+	Auditors        *bool `query:"auditors,omitempty" json:"auditors,omitempty"`
 	Blocked         *bool `query:"blocked,omitempty" json:"blocked,omitempty"`
 	ExcludeInternal *bool `query:"exclude_internal,omitempty" json:"exclude_internal,omitempty"`
 	ExcludeExternal *bool `query:"exclude_external,omitempty" json:"exclude_external,omitempty"`
+	ExcludeActive   *bool `query:"exclude_active,omitempty" json:"exclude_active,omitempty"`
+	ExcludeHumans   *bool `query:"exclude_humans,omitempty" json:"exclude_humans,omitempty"`
 
 	// The options below are only available for admins.
 	Search               *string    `query:"search,omitempty" json:"search,omitempty"`
@@ -148,6 +151,8 @@ type ListUsersOptions struct {
 	TwoFactor            *string    `query:"two_factor,omitempty" json:"two_factor,omitempty"`
 	Admins               *bool      `query:"admins,omitempty" json:"admins,omitempty"`
 	External             *bool      `query:"external,omitempty" json:"external,omitempty"`
+	Humans               *bool      `query:"humans,omitempty" json:"humans,omitempty"`
+	SkipLdap             *bool      `query:"skip_ldap,omitempty" json:"skip_ldap,omitempty"`
 	WithoutProjects      *bool      `query:"without_projects,omitempty" json:"without_projects,omitempty"`
 	WithCustomAttributes *bool      `query:"with_custom_attributes,omitempty" json:"with_custom_attributes,omitempty"`
 	WithoutProjectBots   *bool      `query:"without_project_bots,omitempty" json:"without_project_bots,omitempty"`
@@ -158,7 +163,7 @@ type ListUsersOptions struct {
 // GitLab API docs: https://docs.gitlab.com/ee/api/users.html#list-users
 func (u *UsersService) ListUsers(ctx context.Context, opts *ListUsersOptions) ([]*User, error) {
 	var users []*User
-	if err := u.client.InvokeByCredential(ctx, http.MethodGet, "users", opts, &users); err != nil {
+	if _, err := u.client.InvokeByCredential(ctx, http.MethodGet, "users", opts, &users); err != nil {
 		return nil, err
 	}
 	return users, nil
