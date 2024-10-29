@@ -37,13 +37,14 @@ type ListBranchesOptions struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/branches.html#list-repository-branches
-func (s *BranchesService) ListBranches(ctx context.Context, projectID string, opts *ListBranchesOptions) ([]*Branch, error) {
+func (s *BranchesService) ListBranches(ctx context.Context, projectID string, opts *ListBranchesOptions) ([]*Branch, *PageInfo, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/branches", projectID)
 	var v []*Branch
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
-		return nil, err
+	resp, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v)
+	if err != nil {
+		return nil, nil, err
 	}
-	return v, nil
+	return v, opts.ListOptions.ParsePageInfo(resp), nil
 }
 
 // CreateBranchOptions represents the available CreateBranch() options.

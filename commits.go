@@ -58,11 +58,12 @@ type ListCommitsOptions struct {
 // ListCommits gets a list of repository commits in a project.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/commits.html#list-repository-commits
-func (s *CommitsService) ListCommits(ctx context.Context, projectId string, opts *ListCommitsOptions) ([]*Commit, error) {
+func (s *CommitsService) ListCommits(ctx context.Context, projectId string, opts *ListCommitsOptions) ([]*Commit, *PageInfo, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/commits", projectId)
 	var v []*Commit
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
-		return nil, err
+	resp, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v)
+	if err != nil {
+		return nil, nil, err
 	}
-	return v, nil
+	return v, opts.ListOptions.ParsePageInfo(resp), nil
 }

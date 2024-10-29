@@ -43,7 +43,7 @@ type ListOptions struct {
 	Pagination string             `query:"pagination,omitempty"`
 	OrderBy    string             `query:"order_by,omitempty"`
 	Sort       Sort               `query:"sort,omitempty"`
-	Sets       *map[string]string `query:",inline"`
+	Sets       *map[string]string `query:",inline,omitempty"`
 }
 
 func NewListOptions(page int, perPage ...int) ListOptions {
@@ -91,32 +91,26 @@ const (
 	linkLast  = "last"
 )
 
-type Pagination struct {
-	ListOptions ListOptions
+type PageInfo struct {
+	ListOptions
 
+	Link       PageLink
 	Total      *int
 	TotalPages *int
-
-	NextPage int
-	PrevPage int
-	Page     int
-	PerPage  int
-
-	Pagination string
-
-	NextLink  string
-	PrevLink  string
-	FirstLink string
-	LastLink  string
+	NextPage   int
+	PrevPage   int
 }
 
-func parsePagination(l ListOptions, resp *http.Response) *Pagination {
-	p := &Pagination{
-		l: &l,
+type PageLink struct {
+	Next  string
+	Prev  string
+	First string
+	Last  string
+}
 
-		Page:       l.Page,
-		PerPage:    l.PerPage,
-		Pagination: l.Pagination,
+func (l ListOptions) ParsePageInfo(resp *http.Response) *PageInfo {
+	p := &PageInfo{
+		ListOptions: l,
 	}
 	if total := resp.Header.Get(xTotal); total != "" {
 		if i, err := strconv.Atoi(total); err == nil {
@@ -127,18 +121,6 @@ func parsePagination(l ListOptions, resp *http.Response) *Pagination {
 	if totalPages := resp.Header.Get(xTotalPages); totalPages != "" {
 		if i, err := strconv.Atoi(totalPages); err == nil {
 			p.TotalPages = &i
-		}
-	}
-
-	if perPage := resp.Header.Get(xPerPage); perPage != "" {
-		if i, err := strconv.Atoi(perPage); err == nil {
-			p.PerPage = i
-		}
-	}
-
-	if currentPage := resp.Header.Get(xPage); currentPage != "" {
-		if i, err := strconv.Atoi(currentPage); err == nil {
-			p.Page = i
 		}
 	}
 
@@ -155,7 +137,7 @@ func parsePagination(l ListOptions, resp *http.Response) *Pagination {
 	}
 
 	// keyset
-	if p.Pagination == KeySet {
+	if p.ListOptions.Pagination == KeySet {
 		if link := resp.Header.Get("Link"); link != "" {
 			for _, link := range strings.Split(link, ",") {
 				parts := strings.Split(link, ";")
@@ -168,13 +150,13 @@ func parsePagination(l ListOptions, resp *http.Response) *Pagination {
 
 				switch linkType {
 				case linkPrev:
-					p.PrevLink = linkValue
+					p.Link.Prev = linkValue
 				case linkNext:
-					p.NextLink = linkValue
+					p.Link.Next = linkValue
 				case linkFirst:
-					p.FirstLink = linkValue
+					p.Link.First = linkValue
 				case linkLast:
-					p.LastLink = linkValue
+					p.Link.Last = linkValue
 				}
 			}
 		}
@@ -197,10 +179,10 @@ func parseLink(link string) url.Values {
 
 var keys = []string{"id_after", "cursor"}
 
-func (p *Pagination) Next() (ListOptions, bool) {
-	switch p.Pagination {
+func (p *PageInfo) Next() (ListOptions, bool) {
+	switch p.ListOptions.Pagination {
 	case KeySet:
-		values := parseLink(p.NextLink)
+		values := parseLink(p.Link.Next)
 		if len(values) == 0 {
 			return emptyListOptions, false
 		}
@@ -211,18 +193,18 @@ func (p *Pagination) Next() (ListOptions, bool) {
 			}
 		}
 		return ListOptions{
-			Pagination: p.Pagination,
-			OrderBy:    p.l.OrderBy,
-			Sort:       p.l.Sort,
+			Pagination: KeySet,
+			OrderBy:    p.ListOptions.OrderBy,
+			Sort:       p.ListOptions.Sort,
 			Sets:       &sets,
-		}, false
+		}, true
 	default:
 		if p.NextPage == 0 {
 			return emptyListOptions, false
 		}
 		return ListOptions{
 			Page:    p.NextPage,
-			PerPage: p.PerPage,
+			PerPage: p.ListOptions.PerPage,
 		}, true
 	}
 }

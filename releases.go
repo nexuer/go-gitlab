@@ -69,11 +69,12 @@ type ListReleasesOptions struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/releases/index.html#list-releases
-func (s *ReleasesService) ListReleases(ctx context.Context, projectID string, opts *ListReleasesOptions) ([]*Release, error) {
+func (s *ReleasesService) ListReleases(ctx context.Context, projectID string, opts *ListReleasesOptions) ([]*Release, *PageInfo, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/releases", projectID)
 	var v []*Release
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
-		return nil, err
+	resp, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v)
+	if err != nil {
+		return nil, nil, err
 	}
-	return v, nil
+	return v, opts.ListOptions.ParsePageInfo(resp), nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/nexuer/go-gitlab"
 	"github.com/nexuer/utils/ptr"
@@ -10,7 +11,7 @@ import (
 
 func main() {
 	client := gitlab.NewClient(&gitlab.TokenCredential{
-		AccessToken: "glpat-",
+		AccessToken: os.Getenv("GITLAB_TOKEN"),
 	}, &gitlab.Options{Debug: true})
 
 	if err := listAllProjectsByKeySet(client, context.Background()); err != nil {
@@ -25,7 +26,7 @@ func listAllProjectsByKeySet(cc *gitlab.Client, ctx context.Context) error {
 	}
 	// You can add a retry mechanism here
 	for {
-		reply, pagination, err := cc.Projects.ListProjects(context.Background(), opts)
+		reply, pagination, err := cc.Projects.ListProjects(ctx, opts)
 
 		if err != nil {
 			return err
@@ -48,7 +49,7 @@ func listAllProjects(cc *gitlab.Client, ctx context.Context) error {
 	}
 	// You can add a retry mechanism here
 	for {
-		reply, pagination, err := cc.Projects.ListProjects(context.Background(), opts)
+		reply, pagination, err := cc.Projects.ListProjects(ctx, opts)
 
 		if err != nil {
 			return err

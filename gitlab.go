@@ -35,6 +35,7 @@ type Options struct {
 	Proxy     func(*http.Request) (*url.URL, error)
 	Debug     bool
 	TLS       *tls.Config
+	Limiter   ghttp.Limiter
 }
 
 type Client struct {
@@ -125,6 +126,10 @@ func (c *Client) parseOptions(opts ...*Options) []ghttp.ClientOption {
 		clientOpts = append(clientOpts, ghttp.WithTLSConfig(opt.TLS))
 	}
 
+	if opt.Limiter != nil {
+		clientOpts = append(clientOpts, ghttp.WithLimiter(opt.Limiter))
+	}
+
 	return clientOpts
 }
 
@@ -177,8 +182,6 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 	}
 	return c.cc.Invoke(ctx, method, path, args, reply, callOpt)
 }
-
-// todo: https://docs.gitlab.com/ee/api/rest/#encoding
 
 // Error data-validation-and-error-reporting + OAuth error
 // GitLab API docs: https://docs.gitlab.com/ee/api/rest/#data-validation-and-error-reporting

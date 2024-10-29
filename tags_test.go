@@ -28,7 +28,7 @@ func TestTagsService_ListTags(t *testing.T) {
 	}
 	project := projects[0]
 	t.Logf("project: %s \n", project.WebURL)
-	tags, err := client.Tags.ListTags(context.Background(), strconv.Itoa(project.ID), &ListTagsOptions{
+	tags, _, err := client.Tags.ListTags(context.Background(), strconv.Itoa(project.ID), &ListTagsOptions{
 		ListOptions: ListOptions{
 			Page:    1,
 			PerPage: 20,

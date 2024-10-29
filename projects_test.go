@@ -10,7 +10,7 @@ import (
 func TestProjectsService_ListProjects(t *testing.T) {
 	client := NewClient(testTokenCredential, &Options{Debug: true})
 	opts := &ListProjectsOptions{
-		ListOptions: NewListOptions(1, 1),
+		ListOptions: NewListOptions(1),
 		Membership:  ptr.Ptr(true),
 		//Search:     ptr.Ptr(""),
 		//Visibility: ptr.Ptr(PrivateVisibility),

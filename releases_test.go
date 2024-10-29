@@ -29,7 +29,7 @@ func TestReleasesService_ListReleases(t *testing.T) {
 	}
 	project := projects[0]
 	t.Logf("project: %s \n", project.WebURL)
-	releases, err := client.Releases.ListReleases(context.Background(), strconv.Itoa(project.ID), &ListReleasesOptions{
+	releases, _, err := client.Releases.ListReleases(context.Background(), strconv.Itoa(project.ID), &ListReleasesOptions{
 		//ListOptions: NewKeySet("", SortAsc),
 	})
 	if err != nil {
