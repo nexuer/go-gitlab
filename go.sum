@@ -1,7 +1,7 @@
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/nexuer/ghttp v0.0.0-20241029145002-8290569e00cf h1:7DNNI4os5Q+t39uCJkeUSDY1jcxE4D5ENfNmasMNf1A=
-github.com/nexuer/ghttp v0.0.0-20241029145002-8290569e00cf/go.mod h1:eamUxeETS+1LwQW/BTsZhFL47l05TxPzsv8H9OmHtPA=
+github.com/nexuer/ghttp v0.0.0-20241030062551-dbf46fb95ae5 h1:kdEQkavenHEpqFvAO8DC5vhzUxEcijvGovRu/fztpAQ=
+github.com/nexuer/ghttp v0.0.0-20241030062551-dbf46fb95ae5/go.mod h1:eamUxeETS+1LwQW/BTsZhFL47l05TxPzsv8H9OmHtPA=
 github.com/nexuer/utils v0.0.0-20240926060639-4709b0a8b125 h1:40t3YiOiQ9QRww1SvZBc83LJXTst2rp+HNLWL48F3b0=
 github.com/nexuer/utils v0.0.0-20240926060639-4709b0a8b125/go.mod h1:rbLhfZdurGV3DlQiLGZJTyTwjILFboqA9DBM+AiX1y0=
 golang.org/x/time v0.7.0 h1:ntUhktv3OPE6TgYxXWv9vKvUSJyIFJlyohwbkEwPrKQ=

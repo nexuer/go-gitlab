@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -235,18 +234,34 @@ func (e *Error) Error() string {
 	return ""
 }
 
-func ErrNotFound(err error) bool {
-	var e *ghttp.Error
-	if errors.As(err, &e) {
-		return e.StatusCode == http.StatusNotFound
+func IsNotFound(err error) bool {
+	code, ok := StatusForErr(err)
+	if ok && code == http.StatusNotFound {
+		return true
 	}
 	return false
 }
 
-func StatusForErr(err error) (int, bool) {
-	var e *ghttp.Error
-	if errors.As(err, &e) {
-		return e.StatusCode, true
+func IsForbidden(err error) bool {
+	code, ok := StatusForErr(err)
+	if ok && code == http.StatusForbidden {
+		return true
 	}
-	return 0, false
+	return false
+}
+
+func IsUnauthorized(err error) bool {
+	code, ok := StatusForErr(err)
+	if ok && code == http.StatusUnauthorized {
+		return true
+	}
+	return false
+}
+
+func IsTimeout(err error) bool {
+	return ghttp.IsTimeout(err)
+}
+
+func StatusForErr(err error) (int, bool) {
+	return ghttp.StatusForErr(err)
 }
