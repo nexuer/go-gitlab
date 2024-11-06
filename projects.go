@@ -243,12 +243,14 @@ type ContainerExpirationPolicy struct {
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
 type ListProjectsOptions struct {
-	ListOptions `query:",inline"`
+	ListOptions `query:",inline,omitempty"`
 
 	Archived                 *bool             `query:"archived,omitempty"`
 	IDAfter                  *int              `query:"id_after,omitempty"`
 	IDBefore                 *int              `query:"id_before,omitempty"`
 	Imported                 *bool             `query:"imported,omitempty"`
+	IncludeHidden            *bool             `query:"include_hidden,omitempty"`
+	IncludePendingDelete     *bool             `query:"include_pending_delete,omitempty"`
 	LastActivityAfter        *time.Time        `query:"last_activity_after,omitempty"`
 	LastActivityBefore       *time.Time        `query:"last_activity_before,omitempty"`
 	Membership               *bool             `query:"membership,omitempty"`
@@ -272,9 +274,9 @@ type ListProjectsOptions struct {
 
 // ListProjects gets a list of projects accessible by the authenticated user.
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
-func (ps *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOptions) ([]*Project, *PageInfo, error) {
+func (s *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOptions) ([]*Project, *PageInfo, error) {
 	var projects []*Project
-	resp, err := ps.client.InvokeByCredential(ctx, http.MethodGet, "projects", req, &projects)
+	resp, err := s.client.InvokeByCredential(ctx, http.MethodGet, "projects", req, &projects)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -295,11 +297,66 @@ type GetProjectOptions struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/projects.html#get-a-single-project
-func (ps *ProjectsService) GetProject(ctx context.Context, pid string, opts *GetProjectOptions) (*Project, error) {
+func (s *ProjectsService) GetProject(ctx context.Context, pid string, opts *GetProjectOptions) (*Project, error) {
 	u := fmt.Sprintf("projects/%s", pid)
 	var project Project
-	if _, err := ps.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &project); err != nil {
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &project); err != nil {
 		return nil, err
 	}
 	return &project, nil
+}
+
+// CustomHeader represents a project or group hook custom header
+// Note: "Key" is returned from the Get operation, but "Value" is not
+// The List operation doesn't return any headers at all for Projects,
+// but does return headers for Groups
+type CustomHeader struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// Webhook represents a project webhook.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/project_webhooks.html#list-webhooks-for-a-project
+type Webhook struct {
+	ID                        int             `json:"id"`
+	URL                       string          `json:"url"`
+	ConfidentialNoteEvents    bool            `json:"confidential_note_events"`
+	ProjectID                 int             `json:"project_id"`
+	PushEvents                bool            `json:"push_events"`
+	PushEventsBranchFilter    string          `json:"push_events_branch_filter"`
+	IssuesEvents              bool            `json:"issues_events"`
+	ConfidentialIssuesEvents  bool            `json:"confidential_issues_events"`
+	MergeRequestsEvents       bool            `json:"merge_requests_events"`
+	TagPushEvents             bool            `json:"tag_push_events"`
+	NoteEvents                bool            `json:"note_events"`
+	JobEvents                 bool            `json:"job_events"`
+	PipelineEvents            bool            `json:"pipeline_events"`
+	WikiPageEvents            bool            `json:"wiki_page_events"`
+	DeploymentEvents          bool            `json:"deployment_events"`
+	ReleasesEvents            bool            `json:"releases_events"`
+	EnableSSLVerification     bool            `json:"enable_ssl_verification"`
+	AlertStatus               string          `json:"alert_status"`
+	CreatedAt                 *time.Time      `json:"created_at"`
+	ResourceAccessTokenEvents bool            `json:"resource_access_token_events"`
+	CustomWebhookTemplate     string          `json:"custom_webhook_template"`
+	CustomHeaders             []*CustomHeader `json:"custom_headers"`
+}
+
+type ListWebhooksOptions struct {
+	ListOptions `query:",inline,omitempty"`
+}
+
+// ListWebhooks gets a list of project webhooks.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/project_webhooks.html#list-webhooks-for-a-project
+func (s *ProjectsService) ListWebhooks(ctx context.Context, pid string, opts *ListWebhooksOptions) ([]*Webhook, error) {
+	u := fmt.Sprintf("projects/%s/hooks", pid)
+	var reply []*Webhook
+	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &reply); err != nil {
+		return nil, err
+	}
+	return reply, nil
 }
