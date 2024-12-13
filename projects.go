@@ -276,7 +276,7 @@ type ListProjectsOptions struct {
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
 func (s *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOptions) ([]*Project, *PageInfo, error) {
 	var projects []*Project
-	resp, err := s.client.InvokeByCredential(ctx, http.MethodGet, "projects", req, &projects)
+	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, "projects", req, &projects)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -300,7 +300,7 @@ type GetProjectOptions struct {
 func (s *ProjectsService) GetProject(ctx context.Context, pid string, opts *GetProjectOptions) (*Project, error) {
 	u := fmt.Sprintf("projects/%s", pid)
 	var project Project
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &project); err != nil {
+	if _, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &project); err != nil {
 		return nil, err
 	}
 	return &project, nil
@@ -355,7 +355,7 @@ type ListWebhooksOptions struct {
 func (s *ProjectsService) ListWebhooks(ctx context.Context, pid string, opts *ListWebhooksOptions) ([]*Webhook, error) {
 	u := fmt.Sprintf("projects/%s/hooks", pid)
 	var reply []*Webhook
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, u, opts, &reply); err != nil {
+	if _, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &reply); err != nil {
 		return nil, err
 	}
 	return reply, nil

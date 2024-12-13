@@ -17,7 +17,7 @@ type Version struct {
 func (vs *VersionService) GetVersion(ctx context.Context) (*Version, error) {
 	const apiEndpoint = "version"
 	var v Version
-	if _, err := vs.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, nil, &v); err != nil {
+	if _, err := vs.client.InvokeWithCredential(ctx, http.MethodGet, apiEndpoint, nil, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil

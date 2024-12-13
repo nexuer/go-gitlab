@@ -54,7 +54,7 @@ func (s *RepositoryFilesService) GetFile(ctx context.Context, projectID string, 
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/files/%s", projectID, filepath)
 
 	var v File
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeWithCredential(ctx, http.MethodGet, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
