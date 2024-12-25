@@ -1,4 +1,4 @@
-package gitlab
+package gitlab_test
 
 import (
 	"context"
@@ -6,13 +6,15 @@ import (
 	"net/url"
 	"strconv"
 	"testing"
+
+	"github.com/nexuer/go-gitlab"
 )
 
 func TestReleasesService_ListReleases(t *testing.T) {
-	client := NewClient(testTokenCredential)
+	client := gitlab.NewClient(testTokenCredential)
 
-	projects, _, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
-		ListOptions: ListOptions{
+	projects, _, err := client.Projects.ListProjects(context.Background(), &gitlab.ListProjectsOptions{
+		ListOptions: gitlab.ListOptions{
 			Page:    1,
 			PerPage: 1,
 			OrderBy: "star_count",
@@ -29,7 +31,7 @@ func TestReleasesService_ListReleases(t *testing.T) {
 	}
 	project := projects[0]
 	t.Logf("project: %s \n", project.WebURL)
-	releases, _, err := client.Releases.ListReleases(context.Background(), strconv.Itoa(project.ID), &ListReleasesOptions{
+	releases, _, err := client.Releases.ListReleases(context.Background(), strconv.Itoa(project.ID), &gitlab.ListReleasesOptions{
 		//ListOptions: NewKeySet("", SortAsc),
 	})
 	if err != nil {

@@ -1,17 +1,19 @@
-package gitlab
+package gitlab_test
 
 import (
 	"context"
 	"fmt"
 	"strconv"
 	"testing"
+
+	"github.com/nexuer/go-gitlab"
 )
 
 func TestTagsService_ListTags(t *testing.T) {
-	client := NewClient(testTokenCredential, &Options{Debug: true})
+	client := gitlab.NewClient(testTokenCredential, &gitlab.Options{Debug: true})
 
-	projects, _, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
-		ListOptions: ListOptions{
+	projects, _, err := client.Projects.ListProjects(context.Background(), &gitlab.ListProjectsOptions{
+		ListOptions: gitlab.ListOptions{
 			Page:    1,
 			PerPage: 1,
 			OrderBy: "star_count",
@@ -28,8 +30,8 @@ func TestTagsService_ListTags(t *testing.T) {
 	}
 	project := projects[0]
 	t.Logf("project: %s \n", project.WebURL)
-	tags, _, err := client.Tags.ListTags(context.Background(), strconv.Itoa(project.ID), &ListTagsOptions{
-		ListOptions: ListOptions{
+	tags, _, err := client.Tags.ListTags(context.Background(), strconv.Itoa(project.ID), &gitlab.ListTagsOptions{
+		ListOptions: gitlab.ListOptions{
 			Page:    1,
 			PerPage: 20,
 		},

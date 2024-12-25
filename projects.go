@@ -274,13 +274,13 @@ type ListProjectsOptions struct {
 
 // ListProjects gets a list of projects accessible by the authenticated user.
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
-func (s *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOptions) ([]*Project, *PageInfo, error) {
+func (s *ProjectsService) ListProjects(ctx context.Context, req *ListProjectsOptions) ([]*Project, *Page, error) {
 	var projects []*Project
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, "projects", req, &projects)
 	if err != nil {
 		return nil, nil, err
 	}
-	return projects, req.ListOptions.ParsePageInfo(resp), nil
+	return projects, NewPage(req, resp), nil
 }
 
 // GetProjectOptions represents the available GetProject() options.

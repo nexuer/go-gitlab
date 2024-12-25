@@ -56,6 +56,9 @@ type Client struct {
 	Releases        *ReleasesService
 	RepositoryFiles *RepositoryFilesService
 	Milestones      *MilestonesService
+	Namespaces      *NamespacesService
+	Groups          *GroupsService
+	Members         *MembersService
 }
 
 func NewClient(credential Credential, opts ...*Options) *Client {
@@ -86,6 +89,9 @@ func NewClient(credential Credential, opts ...*Options) *Client {
 	c.Releases = (*ReleasesService)(&c.common)
 	c.RepositoryFiles = (*RepositoryFilesService)(&c.common)
 	c.Milestones = (*MilestonesService)(&c.common)
+	c.Namespaces = (*NamespacesService)(&c.common)
+	c.Groups = (*GroupsService)(&c.common)
+	c.Members = (*MembersService)(&c.common)
 
 	c.SetCredential(credential)
 	return c

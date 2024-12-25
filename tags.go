@@ -36,12 +36,12 @@ type ListTagsOptions struct {
 	Search *string `query:"search,omitempty"`
 }
 
-func (s *TagsService) ListTags(ctx context.Context, projectId string, opts *ListTagsOptions) ([]*Tag, *PageInfo, error) {
+func (s *TagsService) ListTags(ctx context.Context, projectId string, opts *ListTagsOptions) ([]*Tag, *Page, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/tags", projectId)
 	var v []*Tag
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, apiEndpoint, opts, &v)
 	if err != nil {
 		return nil, nil, err
 	}
-	return v, opts.ListOptions.ParsePageInfo(resp), nil
+	return v, NewPage(opts, resp), nil
 }

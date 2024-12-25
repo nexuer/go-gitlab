@@ -1,15 +1,17 @@
-package gitlab
+package gitlab_test
 
 import (
 	"context"
 	"testing"
+
+	"github.com/nexuer/go-gitlab"
 )
 
 func TestUsersService_ListUsers(t *testing.T) {
-	client := NewClient(testTokenCredential, &Options{Debug: true})
+	client := gitlab.NewClient(testTokenCredential, &gitlab.Options{Debug: true})
 
-	users, _, err := client.Users.ListUsers(context.Background(), &ListUsersOptions{
-		ListOptions: NewKeySet("username", SortAsc),
+	users, _, err := client.Users.ListUsers(context.Background(), &gitlab.ListUsersOptions{
+		ListOptions: gitlab.NewKeySet("username", gitlab.SortAsc),
 	})
 	if err != nil {
 		t.Fatalf("Users.ListUsers returned error: %v", err)
@@ -19,7 +21,7 @@ func TestUsersService_ListUsers(t *testing.T) {
 }
 
 func TestUsersService_ListSSHKeys(t *testing.T) {
-	client := NewClient(testTokenCredential, &Options{Debug: true})
+	client := gitlab.NewClient(testTokenCredential, &gitlab.Options{Debug: true})
 
 	keys, err := client.Users.ListSSHKeys(context.Background())
 	if err != nil {

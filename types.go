@@ -1,6 +1,8 @@
 package gitlab
 
-import "time"
+import (
+	"time"
+)
 
 // AccessLevelValue represents a permission level within GitLab.
 //
@@ -162,3 +164,56 @@ func (d Date) MarshalJSON() ([]byte, error) {
 
 	return b, nil
 }
+
+// ProjectCreationLevelValue represents a project creation level within GitLab.
+//
+// GitLab API docs: https://docs.gitlab.com/ee/api/
+type ProjectCreationLevelValue string
+
+// List of available project creation levels.
+//
+// GitLab API docs: https://docs.gitlab.com/ee/api/
+const (
+	NoOneProjectCreation      ProjectCreationLevelValue = "noone"
+	MaintainerProjectCreation ProjectCreationLevelValue = "maintainer"
+	DeveloperProjectCreation  ProjectCreationLevelValue = "developer"
+)
+
+// SubGroupCreationLevelValue represents a sub group creation level within GitLab.
+//
+// GitLab API docs: https://docs.gitlab.com/ee/api/
+type SubGroupCreationLevelValue string
+
+// List of available sub group creation levels.
+//
+// GitLab API docs: https://docs.gitlab.com/ee/api/
+const (
+	OwnerSubGroupCreationLevelValue      SubGroupCreationLevelValue = "owner"
+	MaintainerSubGroupCreationLevelValue SubGroupCreationLevelValue = "maintainer"
+)
+
+// SharedRunnersSettingValue determines whether shared runners are enabled for a
+// group’s subgroups and projects.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/groups.html#options-for-shared_runners_setting
+type SharedRunnersSettingValue string
+
+// List of available shared runner setting levels.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/groups.html#options-for-shared_runners_setting
+const (
+	EnabledSharedRunnersSettingValue                  SharedRunnersSettingValue = "enabled"
+	DisabledAndOverridableSharedRunnersSettingValue   SharedRunnersSettingValue = "disabled_and_overridable"
+	DisabledAndUnoverridableSharedRunnersSettingValue SharedRunnersSettingValue = "disabled_and_unoverridable"
+
+	// Deprecated: DisabledWithOverrideSharedRunnersSettingValue is deprecated
+	// in favor of DisabledAndOverridableSharedRunnersSettingValue.
+	DisabledWithOverrideSharedRunnersSettingValue SharedRunnersSettingValue = "disabled_with_override"
+)
+
+const (
+	UserNamespaceKind  = "user"
+	GroupNamespaceKind = "group"
+)
