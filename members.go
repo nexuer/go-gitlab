@@ -51,6 +51,19 @@ type ListMembersOptions struct {
 	ShowSeatInfo bool    `url:"show_seat_info,omitempty"`
 }
 
+// ListAllMembersOptions
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project-including-inherited-and-invited-members
+type ListAllMembersOptions struct {
+	ListOptions
+	Query        *string `url:"query,omitempty"`
+	UserIDs      *[]int  `url:"user_ids[],omitempty"`
+	SkipUsers    *[]int  `url:"skip_users[],omitempty"`
+	ShowSeatInfo bool    `url:"show_seat_info,omitempty"`
+	State        *string `url:"state,omitempty"`
+}
+
 // ListGroupMembers get a list of group members viewable by the authenticated
 // user. Inherited members through ancestor groups are not included.
 //
@@ -72,7 +85,7 @@ func (s *MembersService) ListGroupMembers(ctx context.Context, gid string, opts 
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project-including-inherited-and-invited-members
-func (s *MembersService) ListAllGroupMembers(ctx context.Context, gid string, opts *ListMembersOptions) ([]*Member, *Page, error) {
+func (s *MembersService) ListAllGroupMembers(ctx context.Context, gid string, opts *ListAllMembersOptions) ([]*Member, *Page, error) {
 	var reply []*Member
 	u := fmt.Sprintf("groups/%s/members/all", gid)
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &reply)
@@ -106,7 +119,7 @@ func (s *MembersService) ListProjectMembers(ctx context.Context, gid string, opt
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project-including-inherited-and-invited-members
-func (s *MembersService) ListAllProjectMembers(ctx context.Context, gid string, opts *ListMembersOptions) ([]*Member, *Page, error) {
+func (s *MembersService) ListAllProjectMembers(ctx context.Context, gid string, opts *ListAllMembersOptions) ([]*Member, *Page, error) {
 	var reply []*Member
 	u := fmt.Sprintf("projects/%s/members/all", gid)
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &reply)

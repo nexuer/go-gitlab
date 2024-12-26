@@ -13,11 +13,36 @@ const (
 	NoPermissions            AccessLevelValue = 0
 	MinimalAccessPermissions AccessLevelValue = 5
 	GuestPermissions         AccessLevelValue = 10
+	PlannerPermissions       AccessLevelValue = 15
 	ReporterPermissions      AccessLevelValue = 20
 	DeveloperPermissions     AccessLevelValue = 30
 	MaintainerPermissions    AccessLevelValue = 40
 	OwnerPermissions         AccessLevelValue = 50
+	AdminPermissions         AccessLevelValue = 60
 )
+
+func (a AccessLevelValue) String() string {
+	switch a {
+	case MinimalAccessPermissions:
+		return "MinimalAccess"
+	case GuestPermissions:
+		return "Guest"
+	case PlannerPermissions:
+		return "Planner"
+	case ReporterPermissions:
+		return "Reporter"
+	case DeveloperPermissions:
+		return "Developer"
+	case MaintainerPermissions:
+		return "Maintainer"
+	case OwnerPermissions:
+		return "Owner"
+	case AdminPermissions:
+		return "Admin"
+	default:
+		return "NoAccess"
+	}
+}
 
 type VisibilityValue string
 
