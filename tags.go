@@ -36,6 +36,12 @@ type ListTagsOptions struct {
 	Search *string `query:"search,omitempty"`
 }
 
+const (
+	TagsOrderByName    = "name"
+	TagsOrderByUpdated = "updated"
+	TagsOrderByVersion = "version"
+)
+
 func (s *TagsService) ListTags(ctx context.Context, projectId string, opts *ListTagsOptions) ([]*Tag, *Page, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/tags", projectId)
 	var v []*Tag
