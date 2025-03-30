@@ -156,6 +156,12 @@ func (c *Client) API(path string, ver ...APIVersion) string {
 	return fmt.Sprintf("/api/%s/%s", c.apiVersion, path)
 }
 
+func (c *Client) auth(accessToken *AccessToken) ghttp.RequestFunc {
+	return func(request *http.Request) error {
+		return c.OAuth.credential.Auth(request, accessToken)
+	}
+}
+
 func (c *Client) InvokeByCredential(ctx context.Context, method, path string, args any, reply any) (*http.Response, error) {
 	accessToken, err := c.OAuth.GetAccessToken(ctx)
 	if err != nil {
@@ -163,8 +169,10 @@ func (c *Client) InvokeByCredential(ctx context.Context, method, path string, ar
 	}
 
 	callOpts := &ghttp.CallOptions{
-		BeforeHook: func(request *http.Request) error {
-			return c.OAuth.credential.Auth(request, accessToken)
+		BeforeHooks: []ghttp.RequestFunc{
+			func(request *http.Request) error {
+				return c.OAuth.credential.Auth(request, accessToken)
+			},
 		},
 	}
 	return c.Invoke(ctx, method, c.API(path), args, reply, callOpts)
