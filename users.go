@@ -33,7 +33,7 @@ type SSHKey struct {
 func (u *UsersService) ListSSHKeys(ctx context.Context) ([]*SSHKey, error) {
 	const apiEndpoint = "user/keys"
 	var keys []*SSHKey
-	if _, err := u.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, nil, &keys); err != nil {
+	if _, err := u.client.InvokeWithCredential(ctx, http.MethodGet, apiEndpoint, nil, &keys); err != nil {
 		return nil, err
 	}
 	return keys, nil
@@ -44,7 +44,7 @@ func (u *UsersService) ListSSHKeys(ctx context.Context) ([]*SSHKey, error) {
 func (u *UsersService) AddSSHKey(ctx context.Context, req *AddSSHKeyOptions) (*SSHKey, error) {
 	const apiEndpoint = "user/keys"
 	var key SSHKey
-	if _, err := u.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, req, &key); err != nil {
+	if _, err := u.client.InvokeWithCredential(ctx, http.MethodPost, apiEndpoint, req, &key); err != nil {
 		return nil, err
 	}
 	return &key, nil
@@ -54,7 +54,7 @@ func (u *UsersService) AddSSHKey(ctx context.Context, req *AddSSHKeyOptions) (*S
 // GitLab API Docs: https://docs.gitlab.com/ee/api/user_keys.html#delete-an-ssh-key-from-your-account
 func (u *UsersService) DeleteSSHKey(ctx context.Context, keyId string) error {
 	apiEndpoint := fmt.Sprintf("user/keys/%s", keyId)
-	if _, err := u.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
+	if _, err := u.client.InvokeWithCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
 		return err
 	}
 	return nil
@@ -161,11 +161,11 @@ type ListUsersOptions struct {
 // ListUsers gets a list of users.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/users.html#list-users
-func (u *UsersService) ListUsers(ctx context.Context, opts *ListUsersOptions) ([]*User, *PageInfo, error) {
+func (u *UsersService) ListUsers(ctx context.Context, opts *ListUsersOptions) ([]*User, *Page, error) {
 	var users []*User
-	resp, err := u.client.InvokeByCredential(ctx, http.MethodGet, "users", opts, &users)
+	resp, err := u.client.InvokeWithCredential(ctx, http.MethodGet, "users", opts, &users)
 	if err != nil {
 		return nil, nil, err
 	}
-	return users, opts.ParsePageInfo(resp), nil
+	return users, NewPage(opts, resp), nil
 }

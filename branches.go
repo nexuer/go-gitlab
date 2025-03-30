@@ -37,14 +37,14 @@ type ListBranchesOptions struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/branches.html#list-repository-branches
-func (s *BranchesService) ListBranches(ctx context.Context, projectID string, opts *ListBranchesOptions) ([]*Branch, *PageInfo, error) {
+func (s *BranchesService) ListBranches(ctx context.Context, projectID string, opts *ListBranchesOptions) ([]*Branch, *Page, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/branches", projectID)
 	var v []*Branch
-	resp, err := s.client.InvokeByCredential(ctx, http.MethodGet, apiEndpoint, opts, &v)
+	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, apiEndpoint, opts, &v)
 	if err != nil {
 		return nil, nil, err
 	}
-	return v, opts.ListOptions.ParsePageInfo(resp), nil
+	return v, NewPage(opts, resp), nil
 }
 
 // CreateBranchOptions represents the available CreateBranch() options.
@@ -59,7 +59,7 @@ type CreateBranchOptions struct {
 func (s *BranchesService) CreateBranch(ctx context.Context, projectId string, opts *CreateBranchOptions) (*Branch, error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/branches", projectId)
 	var v *Branch
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodPost, apiEndpoint, opts, &v); err != nil {
+	if _, err := s.client.InvokeWithCredential(ctx, http.MethodPost, apiEndpoint, opts, &v); err != nil {
 		return nil, err
 	}
 	return v, nil
@@ -67,7 +67,7 @@ func (s *BranchesService) CreateBranch(ctx context.Context, projectId string, op
 
 func (s *BranchesService) DeleteBranch(ctx context.Context, projectId, branch string) error {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/branches/%s", projectId, branch)
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
+	if _, err := s.client.InvokeWithCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
 		return err
 	}
 	return nil
@@ -75,7 +75,7 @@ func (s *BranchesService) DeleteBranch(ctx context.Context, projectId, branch st
 
 func (s *BranchesService) DeleteMergedBranches(ctx context.Context, projectId string) error {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/merged_branches", projectId)
-	if _, err := s.client.InvokeByCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
+	if _, err := s.client.InvokeWithCredential(ctx, http.MethodDelete, apiEndpoint, nil, nil); err != nil {
 		return err
 	}
 	return nil

@@ -3,6 +3,7 @@ package gitlab
 import (
 	"net/http"
 	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -22,6 +23,10 @@ const (
 const (
 	KeySet = "keyset"
 )
+
+type list interface {
+	listOptions() ListOptions
+}
 
 // ListOptions specifies the optional parameters to various List methods that
 // support pagination.
@@ -44,6 +49,10 @@ type ListOptions struct {
 	OrderBy    string             `query:"order_by,omitempty"`
 	Sort       Sort               `query:"sort,omitempty"`
 	Sets       *map[string]string `query:",inline,omitempty"`
+}
+
+func (l ListOptions) listOptions() ListOptions {
+	return l
 }
 
 func NewListOptions(page int, perPage ...int) ListOptions {
@@ -91,36 +100,49 @@ const (
 	linkLast  = "last"
 )
 
-type PageInfo struct {
+type Page struct {
 	ListOptions
 
-	Link       PageLink
-	Total      *int
-	TotalPages *int
+	// Fields used for offset-based pagination.
+	Total      int
+	TotalPages int
 	NextPage   int
 	PrevPage   int
+
+	// Fields used for keyset-based pagination.
+	PrevLink  string
+	NextLink  string
+	FirstLink string
+	LastLink  string
 }
 
-type PageLink struct {
-	Next  string
-	Prev  string
-	First string
-	Last  string
-}
-
-func (l ListOptions) ParsePageInfo(resp *http.Response) *PageInfo {
-	p := &PageInfo{
-		ListOptions: l,
+func NewPage(l list, resp *http.Response) *Page {
+	p := new(Page)
+	if reflect.ValueOf(l).IsZero() {
+		p.ListOptions = emptyListOptions
+	} else {
+		p.ListOptions = l.listOptions()
 	}
+
+	if resp == nil {
+		return p
+	}
+
+	p.parse(resp)
+
+	return p
+}
+
+func (p *Page) parse(resp *http.Response) {
 	if total := resp.Header.Get(xTotal); total != "" {
 		if i, err := strconv.Atoi(total); err == nil {
-			p.Total = &i
+			p.Total = i
 		}
 	}
 
 	if totalPages := resp.Header.Get(xTotalPages); totalPages != "" {
 		if i, err := strconv.Atoi(totalPages); err == nil {
-			p.TotalPages = &i
+			p.TotalPages = i
 		}
 	}
 
@@ -150,18 +172,17 @@ func (l ListOptions) ParsePageInfo(resp *http.Response) *PageInfo {
 
 				switch linkType {
 				case linkPrev:
-					p.Link.Prev = linkValue
+					p.PrevLink = linkValue
 				case linkNext:
-					p.Link.Next = linkValue
+					p.NextLink = linkValue
 				case linkFirst:
-					p.Link.First = linkValue
+					p.FirstLink = linkValue
 				case linkLast:
-					p.Link.Last = linkValue
+					p.LastLink = linkValue
 				}
 			}
 		}
 	}
-	return p
 }
 
 var emptyListOptions = ListOptions{}
@@ -179,10 +200,10 @@ func parseLink(link string) url.Values {
 
 var keys = []string{"id_after", "cursor"}
 
-func (p *PageInfo) Next() (ListOptions, bool) {
+func (p *Page) Next() (ListOptions, bool) {
 	switch p.ListOptions.Pagination {
 	case KeySet:
-		values := parseLink(p.Link.Next)
+		values := parseLink(p.NextLink)
 		if len(values) == 0 {
 			return emptyListOptions, false
 		}

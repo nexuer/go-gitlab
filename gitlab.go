@@ -56,6 +56,9 @@ type Client struct {
 	Releases        *ReleasesService
 	RepositoryFiles *RepositoryFilesService
 	Milestones      *MilestonesService
+	Namespaces      *NamespacesService
+	Groups          *GroupsService
+	Members         *MembersService
 }
 
 func NewClient(credential Credential, opts ...*Options) *Client {
@@ -86,6 +89,9 @@ func NewClient(credential Credential, opts ...*Options) *Client {
 	c.Releases = (*ReleasesService)(&c.common)
 	c.RepositoryFiles = (*RepositoryFilesService)(&c.common)
 	c.Milestones = (*MilestonesService)(&c.common)
+	c.Namespaces = (*NamespacesService)(&c.common)
+	c.Groups = (*GroupsService)(&c.common)
+	c.Members = (*MembersService)(&c.common)
 
 	c.SetCredential(credential)
 	return c
@@ -156,38 +162,29 @@ func (c *Client) API(path string, ver ...APIVersion) string {
 	return fmt.Sprintf("/api/%s/%s", c.apiVersion, path)
 }
 
-func (c *Client) auth(accessToken *AccessToken) ghttp.RequestFunc {
-	return func(request *http.Request) error {
-		return c.OAuth.credential.Auth(request, accessToken)
-	}
-}
-
-func (c *Client) InvokeByCredential(ctx context.Context, method, path string, args any, reply any) (*http.Response, error) {
+func (c *Client) InvokeWithCredential(ctx context.Context, method, path string, args any, reply any, fn ...ghttp.RequestFunc) (*http.Response, error) {
 	accessToken, err := c.OAuth.GetAccessToken(ctx)
 	if err != nil {
 		return nil, err
 	}
-
-	callOpts := &ghttp.CallOptions{
-		BeforeHooks: []ghttp.RequestFunc{
-			func(request *http.Request) error {
-				return c.OAuth.credential.Auth(request, accessToken)
-			},
-		},
+	fns := make([]ghttp.RequestFunc, 1, len(fn)+1)
+	fns[0] = func(request *http.Request) error {
+		return c.OAuth.credential.Auth(request, accessToken)
 	}
-	return c.Invoke(ctx, method, c.API(path), args, reply, callOpts)
+	fns = append(fns, fn...)
+	return c.Invoke(ctx, method, c.API(path), args, reply, fns...)
 }
 
-func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, callOpts ...*ghttp.CallOptions) (*http.Response, error) {
-	callOpt := &ghttp.CallOptions{}
-	if len(callOpts) > 0 && callOpts[0] != nil {
-		callOpt = callOpts[0]
+func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, fn ...ghttp.RequestFunc) (*http.Response, error) {
+	opts := &ghttp.CallOptions{
+		BeforeHooks: fn,
 	}
 	if method == http.MethodGet && args != nil {
-		callOpt.Query = args
+		opts.Query = args
 		args = nil
 	}
-	return c.cc.Invoke(ctx, method, path, args, reply, callOpt)
+
+	return c.cc.Invoke(ctx, method, path, args, reply, opts)
 }
 
 // Error data-validation-and-error-reporting + OAuth error

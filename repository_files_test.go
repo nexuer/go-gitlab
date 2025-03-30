@@ -1,4 +1,4 @@
-package gitlab
+package gitlab_test
 
 import (
 	"context"
@@ -6,14 +6,15 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/nexuer/go-gitlab"
 	"github.com/nexuer/utils/ptr"
 )
 
 func TestRepositoryFilesService_GetFile(t *testing.T) {
-	client := NewClient(testTokenCredential)
+	client := gitlab.NewClient(testTokenCredential)
 
-	projects, _, err := client.Projects.ListProjects(context.Background(), &ListProjectsOptions{
-		ListOptions: ListOptions{
+	projects, _, err := client.Projects.ListProjects(context.Background(), &gitlab.ListProjectsOptions{
+		ListOptions: gitlab.ListOptions{
 			Page:    1,
 			PerPage: 1,
 			OrderBy: "star_count",
@@ -31,7 +32,7 @@ func TestRepositoryFilesService_GetFile(t *testing.T) {
 	project := projects[0]
 	t.Logf("project: %s \n", project.WebURL)
 
-	file, err := client.RepositoryFiles.GetFile(context.Background(), strconv.Itoa(project.ID), ".gitignore", &GetFileOptions{
+	file, err := client.RepositoryFiles.GetFile(context.Background(), strconv.Itoa(project.ID), ".gitignore", &gitlab.GetFileOptions{
 		Ref: ptr.Ptr("master"),
 	})
 	if err != nil {

@@ -1,13 +1,15 @@
-package gitlab
+package gitlab_test
 
 import (
 	"fmt"
 	"net"
 	"os"
 	"testing"
+
+	"github.com/nexuer/go-gitlab"
 )
 
-var testTokenCredential = &TokenCredential{
+var testTokenCredential = &gitlab.TokenCredential{
 	Endpoint:    os.Getenv("GITLAB_HOST"),
 	AccessToken: os.Getenv("GITLAB_TOKEN"),
 }
