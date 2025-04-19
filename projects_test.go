@@ -11,20 +11,20 @@ import (
 func TestProjectsService_ListProjects(t *testing.T) {
 	client := gitlab.NewClient(testTokenCredential, &gitlab.Options{Debug: true})
 	opts := &gitlab.ListProjectsOptions{
-		ListOptions:   gitlab.NewListOptions(1),
+		//ListOptions:   gitlab.NewListOptions(1),
 		Membership:    ptr.Ptr(true),
 		Statistics:    ptr.Ptr(true),
 		IncludeHidden: ptr.Ptr(true),
 		//Search:     ptr.Ptr(""),
 		//Visibility: ptr.Ptr(PrivateVisibility),
 	}
-	reply, page, err := client.Projects.ListProjects(context.Background(), opts)
+	reply, err := client.Projects.ListProjects(context.Background(), opts)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Logf("page: %+v\n%v\n", page, reply)
+	t.Logf("page: %+v\n", reply)
 }
 
 func TestProjectsService_GetProject(t *testing.T) {

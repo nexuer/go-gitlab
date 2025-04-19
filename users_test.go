@@ -10,7 +10,7 @@ import (
 func TestUsersService_ListUsers(t *testing.T) {
 	client := gitlab.NewClient(testTokenCredential, &gitlab.Options{Debug: true})
 
-	users, _, err := client.Users.ListUsers(context.Background(), &gitlab.ListUsersOptions{
+	users, err := client.Users.ListUsers(context.Background(), &gitlab.ListUsersOptions{
 		ListOptions: gitlab.NewKeySet("username", gitlab.SortAsc),
 	})
 	if err != nil {

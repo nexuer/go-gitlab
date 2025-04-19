@@ -161,11 +161,11 @@ type ListUsersOptions struct {
 // ListUsers gets a list of users.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/users.html#list-users
-func (u *UsersService) ListUsers(ctx context.Context, opts *ListUsersOptions) ([]*User, *Page, error) {
+func (u *UsersService) ListUsers(ctx context.Context, opts *ListUsersOptions) (*Records[User], error) {
 	var users []*User
 	resp, err := u.client.InvokeWithCredential(ctx, http.MethodGet, "users", opts, &users)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return users, NewPage(opts, resp), nil
+	return newRecords(opts, users, resp), nil
 }

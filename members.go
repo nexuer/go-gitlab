@@ -69,15 +69,15 @@ type ListAllMembersOptions struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project
-func (s *MembersService) ListGroupMembers(ctx context.Context, gid string, opts *ListMembersOptions) ([]*Member, *Page, error) {
+func (s *MembersService) ListGroupMembers(ctx context.Context, gid string, opts *ListMembersOptions) (*Records[Member], error) {
 	var reply []*Member
 	u := fmt.Sprintf("groups/%s/members", gid)
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &reply)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return reply, NewPage(opts, resp), nil
+	return newRecords(opts, reply, resp), nil
 }
 
 // ListAllGroupMembers get a list of group members viewable by the authenticated
@@ -85,15 +85,15 @@ func (s *MembersService) ListGroupMembers(ctx context.Context, gid string, opts 
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project-including-inherited-and-invited-members
-func (s *MembersService) ListAllGroupMembers(ctx context.Context, gid string, opts *ListAllMembersOptions) ([]*Member, *Page, error) {
+func (s *MembersService) ListAllGroupMembers(ctx context.Context, gid string, opts *ListAllMembersOptions) (*Records[Member], error) {
 	var reply []*Member
 	u := fmt.Sprintf("groups/%s/members/all", gid)
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &reply)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return reply, NewPage(opts, resp), nil
+	return newRecords(opts, reply, resp), nil
 }
 
 // ListProjectMembers gets a list of a project's team members viewable by the
@@ -102,15 +102,15 @@ func (s *MembersService) ListAllGroupMembers(ctx context.Context, gid string, op
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project
-func (s *MembersService) ListProjectMembers(ctx context.Context, gid string, opts *ListMembersOptions) ([]*Member, *Page, error) {
+func (s *MembersService) ListProjectMembers(ctx context.Context, gid string, opts *ListMembersOptions) (*Records[Member], error) {
 	var reply []*Member
 	u := fmt.Sprintf("projects/%s/members", gid)
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &reply)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return reply, NewPage(opts, resp), nil
+	return newRecords(opts, reply, resp), nil
 }
 
 // ListAllProjectMembers gets a list of a project's team members viewable by the
@@ -119,13 +119,13 @@ func (s *MembersService) ListProjectMembers(ctx context.Context, gid string, opt
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project-including-inherited-and-invited-members
-func (s *MembersService) ListAllProjectMembers(ctx context.Context, gid string, opts *ListAllMembersOptions) ([]*Member, *Page, error) {
+func (s *MembersService) ListAllProjectMembers(ctx context.Context, gid string, opts *ListAllMembersOptions) (*Records[Member], error) {
 	var reply []*Member
 	u := fmt.Sprintf("projects/%s/members/all", gid)
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, u, opts, &reply)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return reply, NewPage(opts, resp), nil
+	return newRecords(opts, reply, resp), nil
 }

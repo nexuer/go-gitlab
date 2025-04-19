@@ -13,7 +13,7 @@ import (
 func TestReleasesService_ListReleases(t *testing.T) {
 	client := gitlab.NewClient(testTokenCredential)
 
-	projects, _, err := client.Projects.ListProjects(context.Background(), &gitlab.ListProjectsOptions{
+	projects, err := client.Projects.ListProjects(context.Background(), &gitlab.ListProjectsOptions{
 		ListOptions: gitlab.ListOptions{
 			Page:    1,
 			PerPage: 1,
@@ -26,18 +26,18 @@ func TestReleasesService_ListReleases(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(projects) == 0 {
+	if len(projects.Records) == 0 {
 		t.Error(fmt.Errorf("empty projects"))
 	}
-	project := projects[0]
+	project := projects.Records[0]
 	t.Logf("project: %s \n", project.WebURL)
-	releases, _, err := client.Releases.ListReleases(context.Background(), strconv.Itoa(project.ID), &gitlab.ListReleasesOptions{
+	releases, err := client.Releases.ListReleases(context.Background(), strconv.Itoa(project.ID), &gitlab.ListReleasesOptions{
 		//ListOptions: NewKeySet("", SortAsc),
 	})
 	if err != nil {
 		t.Fatalf("Releases.ListReleases returned error: %v", err)
 	}
-	for _, release := range releases {
+	for _, release := range releases.Records {
 		t.Logf("release: %s \n", release.Name)
 	}
 }

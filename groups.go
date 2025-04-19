@@ -134,12 +134,12 @@ type ListGroupsOptions struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/groups.html#list-groups
-func (s *GroupsService) ListGroups(ctx context.Context, opts *ListGroupsOptions) ([]*Group, *Page, error) {
+func (s *GroupsService) ListGroups(ctx context.Context, opts *ListGroupsOptions) (*Records[Group], error) {
 	var reply []*Group
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, "groups", opts, &reply)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return reply, NewPage(opts, resp), nil
+	return newRecords[Group](opts, reply, resp), nil
 }

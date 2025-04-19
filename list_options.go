@@ -100,8 +100,10 @@ const (
 	linkLast  = "last"
 )
 
-type Page struct {
+type Records[T any] struct {
 	ListOptions
+
+	Records []*T
 
 	// Fields used for offset-based pagination.
 	Total      int
@@ -116,50 +118,52 @@ type Page struct {
 	LastLink  string
 }
 
-func NewPage(l list, resp *http.Response) *Page {
-	p := new(Page)
+func newRecords[T any](l list, res []*T, resp *http.Response) *Records[T] {
+	r := &Records[T]{
+		Records: res,
+	}
 	if reflect.ValueOf(l).IsZero() {
-		p.ListOptions = emptyListOptions
+		r.ListOptions = emptyListOptions
 	} else {
-		p.ListOptions = l.listOptions()
+		r.ListOptions = l.listOptions()
 	}
 
 	if resp == nil {
-		return p
+		return r
 	}
 
-	p.parse(resp)
+	r.parse(resp)
 
-	return p
+	return r
 }
 
-func (p *Page) parse(resp *http.Response) {
+func (r *Records[T]) parse(resp *http.Response) {
 	if total := resp.Header.Get(xTotal); total != "" {
 		if i, err := strconv.Atoi(total); err == nil {
-			p.Total = i
+			r.Total = i
 		}
 	}
 
 	if totalPages := resp.Header.Get(xTotalPages); totalPages != "" {
 		if i, err := strconv.Atoi(totalPages); err == nil {
-			p.TotalPages = i
+			r.TotalPages = i
 		}
 	}
 
 	if nextPage := resp.Header.Get(xNextPage); nextPage != "" {
 		if i, err := strconv.Atoi(nextPage); err == nil {
-			p.NextPage = i
+			r.NextPage = i
 		}
 	}
 
 	if prevPage := resp.Header.Get(xPrevPage); prevPage != "" {
 		if i, err := strconv.Atoi(prevPage); err == nil {
-			p.PrevPage = i
+			r.PrevPage = i
 		}
 	}
 
 	// keyset
-	if p.ListOptions.Pagination == KeySet {
+	if r.ListOptions.Pagination == KeySet {
 		if link := resp.Header.Get("Link"); link != "" {
 			for _, link := range strings.Split(link, ",") {
 				parts := strings.Split(link, ";")
@@ -172,13 +176,13 @@ func (p *Page) parse(resp *http.Response) {
 
 				switch linkType {
 				case linkPrev:
-					p.PrevLink = linkValue
+					r.PrevLink = linkValue
 				case linkNext:
-					p.NextLink = linkValue
+					r.NextLink = linkValue
 				case linkFirst:
-					p.FirstLink = linkValue
+					r.FirstLink = linkValue
 				case linkLast:
-					p.LastLink = linkValue
+					r.LastLink = linkValue
 				}
 			}
 		}
@@ -200,10 +204,10 @@ func parseLink(link string) url.Values {
 
 var keys = []string{"id_after", "cursor"}
 
-func (p *Page) Next() (ListOptions, bool) {
-	switch p.ListOptions.Pagination {
+func (r *Records[T]) Next() (ListOptions, bool) {
+	switch r.ListOptions.Pagination {
 	case KeySet:
-		values := parseLink(p.NextLink)
+		values := parseLink(r.NextLink)
 		if len(values) == 0 {
 			return emptyListOptions, false
 		}
@@ -215,17 +219,17 @@ func (p *Page) Next() (ListOptions, bool) {
 		}
 		return ListOptions{
 			Pagination: KeySet,
-			OrderBy:    p.ListOptions.OrderBy,
-			Sort:       p.ListOptions.Sort,
+			OrderBy:    r.ListOptions.OrderBy,
+			Sort:       r.ListOptions.Sort,
 			Sets:       &sets,
 		}, true
 	default:
-		if p.NextPage == 0 {
+		if r.NextPage == 0 {
 			return emptyListOptions, false
 		}
 		return ListOptions{
-			Page:    p.NextPage,
-			PerPage: p.ListOptions.PerPage,
+			Page:    r.NextPage,
+			PerPage: r.ListOptions.PerPage,
 		}, true
 	}
 }

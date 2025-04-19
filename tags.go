@@ -42,12 +42,12 @@ const (
 	TagsOrderByVersion = "version"
 )
 
-func (s *TagsService) ListTags(ctx context.Context, projectId string, opts *ListTagsOptions) ([]*Tag, *Page, error) {
+func (s *TagsService) ListTags(ctx context.Context, projectId string, opts *ListTagsOptions) (*Records[Tag], error) {
 	apiEndpoint := fmt.Sprintf("projects/%s/repository/tags", projectId)
 	var v []*Tag
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, apiEndpoint, opts, &v)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return v, NewPage(opts, resp), nil
+	return newRecords(opts, v, resp), nil
 }

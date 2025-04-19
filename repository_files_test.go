@@ -13,7 +13,7 @@ import (
 func TestRepositoryFilesService_GetFile(t *testing.T) {
 	client := gitlab.NewClient(testTokenCredential)
 
-	projects, _, err := client.Projects.ListProjects(context.Background(), &gitlab.ListProjectsOptions{
+	projects, err := client.Projects.ListProjects(context.Background(), &gitlab.ListProjectsOptions{
 		ListOptions: gitlab.ListOptions{
 			Page:    1,
 			PerPage: 1,
@@ -26,10 +26,10 @@ func TestRepositoryFilesService_GetFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(projects) == 0 {
+	if len(projects.Records) == 0 {
 		t.Error(fmt.Errorf("empty projects"))
 	}
-	project := projects[0]
+	project := projects.Records[0]
 	t.Logf("project: %s \n", project.WebURL)
 
 	file, err := client.RepositoryFiles.GetFile(context.Background(), strconv.Itoa(project.ID), ".gitignore", &gitlab.GetFileOptions{

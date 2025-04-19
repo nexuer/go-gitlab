@@ -46,12 +46,12 @@ type ListNamespacesOptions struct {
 // ListNamespaces gets a list of projects accessible by the authenticated user.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/namespaces.html#list-namespaces
-func (s *NamespacesService) ListNamespaces(ctx context.Context, opts *ListNamespacesOptions) ([]*Namespace, *Page, error) {
+func (s *NamespacesService) ListNamespaces(ctx context.Context, opts *ListNamespacesOptions) (*Records[Namespace], error) {
 	var reply []*Namespace
 	resp, err := s.client.InvokeWithCredential(ctx, http.MethodGet, "namespaces", opts, &reply)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return reply, NewPage(opts, resp), nil
+	return newRecords(opts, reply, resp), nil
 }

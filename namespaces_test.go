@@ -10,11 +10,11 @@ import (
 func TestNamespacesService_ListNamespaces(t *testing.T) {
 	client := gitlab.NewClient(testTokenCredential, &gitlab.Options{Debug: true})
 
-	reply, page, err := client.Namespaces.ListNamespaces(context.Background(), nil)
+	reply, err := client.Namespaces.ListNamespaces(context.Background(), nil)
 
 	if err != nil {
 		t.Error(err)
 	} else {
-		t.Logf("%v\npage: %+v", reply, page)
+		t.Logf("%+v\n", reply)
 	}
 }
