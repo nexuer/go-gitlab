@@ -26,14 +26,14 @@ func listAllProjectsByKeySet(cc *gitlab.Client, ctx context.Context) error {
 	}
 	// You can add a retry mechanism here
 	for {
-		reply, pagination, err := cc.Projects.ListProjects(ctx, opts)
+		reply, err := cc.Projects.ListProjects(ctx, opts)
 
 		if err != nil {
 			return err
 		}
 
-		log.Printf("Found project length: %d", len(reply))
-		l, ok := pagination.Next()
+		log.Printf("Found project length: %d", len(reply.Records))
+		l, ok := reply.Next()
 		if !ok {
 			break
 		}
@@ -49,16 +49,16 @@ func listAllProjects(cc *gitlab.Client, ctx context.Context) error {
 	}
 	// You can add a retry mechanism here
 	for {
-		reply, pagination, err := cc.Projects.ListProjects(ctx, opts)
+		reply, err := cc.Projects.ListProjects(ctx, opts)
 
 		if err != nil {
 			return err
 		}
-		log.Printf("Found project length: %d", len(reply))
-		if pagination.NextPage == 0 {
+		log.Printf("Found project length: %d", len(reply.Records))
+		if reply.NextPage == 0 {
 			break
 		}
-		opts.ListOptions.Page = pagination.NextPage
+		opts.ListOptions.Page = reply.NextPage
 	}
 	return nil
 }
@@ -70,13 +70,13 @@ func listAllProjects1(cc *gitlab.Client, ctx context.Context) error {
 	}
 	// You can add a retry mechanism here
 	for {
-		reply, pagination, err := cc.Projects.ListProjects(context.Background(), opts)
+		reply, err := cc.Projects.ListProjects(context.Background(), opts)
 
 		if err != nil {
 			return err
 		}
-		log.Printf("Found project length: %d", len(reply))
-		l, ok := pagination.Next()
+		log.Printf("Found project length: %d", len(reply.Records))
+		l, ok := reply.Next()
 		if !ok {
 			break
 		}

@@ -162,12 +162,12 @@ func (c *Client) API(path string, ver ...APIVersion) string {
 	return fmt.Sprintf("/api/%s/%s", c.apiVersion, path)
 }
 
-func (c *Client) InvokeWithCredential(ctx context.Context, method, path string, args any, reply any, fn ...ghttp.RequestFunc) (*http.Response, error) {
+func (c *Client) InvokeWithCredential(ctx context.Context, method, path string, args any, reply any, fn ...ghttp.BeforeHook) (*http.Response, error) {
 	accessToken, err := c.OAuth.GetAccessToken(ctx)
 	if err != nil {
 		return nil, err
 	}
-	fns := make([]ghttp.RequestFunc, 1, len(fn)+1)
+	fns := make([]ghttp.BeforeHook, 1, len(fn)+1)
 	fns[0] = func(request *http.Request) error {
 		return c.OAuth.credential.Auth(request, accessToken)
 	}
@@ -175,16 +175,16 @@ func (c *Client) InvokeWithCredential(ctx context.Context, method, path string, 
 	return c.Invoke(ctx, method, c.API(path), args, reply, fns...)
 }
 
-func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, fn ...ghttp.RequestFunc) (*http.Response, error) {
-	opts := &ghttp.CallOptions{
-		BeforeHooks: fn,
+func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, fn ...ghttp.BeforeHook) (*http.Response, error) {
+	opts := []ghttp.CallOption{
+		ghttp.Before(fn...),
 	}
 	if method == http.MethodGet && args != nil {
-		opts.Query = args
+		opts = append(opts, ghttp.Query(args))
 		args = nil
 	}
 
-	return c.cc.Invoke(ctx, method, path, args, reply, opts)
+	return c.cc.Invoke(ctx, method, path, args, reply, opts...)
 }
 
 // Error data-validation-and-error-reporting + OAuth error
@@ -268,5 +268,5 @@ func IsTimeout(err error) bool {
 }
 
 func StatusForErr(err error) (int, bool) {
-	return ghttp.StatusForErr(err)
+	return ghttp.StatusCode(err)
 }
